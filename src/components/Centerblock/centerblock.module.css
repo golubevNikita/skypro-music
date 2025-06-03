@@ -113,22 +113,6 @@
   color: #ffffff;
 }
 
-.filter__button {
-  /*composes: btn-text from '/src/UI/Button/button.module.css';*/
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  border: 1px solid #ffffff;
-  border-radius: 60px;
-  padding: 6px 20px;
-  color: #ffffff;
-}
-
-.filter__button:not(:last-child) {
-  margin-right: 10px;
-}
-
 .centerblock__content {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -310,12 +294,21 @@
   color: #696969;
 }
 
+.track__time {
+  /* Есть в разметке, но нет в стилях скобочка грусти( */
+}
+
 .track__timeSvg {
   width: 14px;
   height: 12px;
   margin-right: 17px;
   fill: transparent;
   stroke: #696969;
+}
+
+.track__timeSvg_active {
+  fill: rgba(182, 114, 255, 1);
+  stroke: rgba(182, 114, 255, 1);
 }
 
 .track__timeText {
