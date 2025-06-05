@@ -10,11 +10,8 @@ import styles from './main.module.css';
 export default function Main() {
   const [burgerMenu, setBurgerMenu] = useState<boolean>(true);
 
-  function burgerMenuCloseOpen(
-    menu: boolean,
-    setFunction: (value: boolean) => void,
-  ) {
-    setFunction(!menu);
+  function burgerMenuCloseOpen() {
+    setBurgerMenu(!burgerMenu);
   }
 
   return (
@@ -28,12 +25,7 @@ export default function Main() {
           height={170}
         />
       </div>
-      <div
-        className={styles.nav__burger}
-        onClick={() => {
-          burgerMenuCloseOpen(burgerMenu, setBurgerMenu);
-        }}
-      >
+      <div className={styles.nav__burger} onClick={burgerMenuCloseOpen}>
         <span className={styles.burger__line}></span>
         <span className={styles.burger__line}></span>
         <span className={styles.burger__line}></span>

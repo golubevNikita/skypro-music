@@ -11,6 +11,7 @@
   color: #ffffff;
   cursor: pointer;
   transition: 0.5s;
+  z-index: 150;
 }
 
 .filter__button:not(:last-child) {

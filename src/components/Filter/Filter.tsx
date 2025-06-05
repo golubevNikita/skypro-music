@@ -21,6 +21,10 @@ export default function Filter() {
     popUp: boolean,
     setFunction: (value: React.SetStateAction<boolean>) => void,
   ) {
+    setAuthorsPopUp(false);
+    setReleaseDatesPopUp(false);
+    setGenresPopUp(false);
+
     setFunction(!popUp);
   }
 
