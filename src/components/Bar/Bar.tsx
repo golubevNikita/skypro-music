@@ -1,34 +1,101 @@
+'use client';
+
 import Link from 'next/link';
-import styles from './bar.module.css';
 import classNames from 'classnames';
+import { useEffect, useRef } from 'react';
+
+import { useAppSelector, useAppDispatch } from '@/store/store';
+import { setIsNowPlaying } from '@/store/features/trackSlice';
+
+import { trackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+
+import styles from './bar.module.css';
 
 export default function Bar() {
+  useEffect(() => {
+    if (isPlaying) {
+      audioRef.current?.play();
+    }
+  });
+
+  const dispatch = useAppDispatch();
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const currentTrack: trackItemInterface | null = useAppSelector((state) => {
+    return state.tracks.currentTrack;
+  });
+
+  const isPlaying: boolean | null = useAppSelector((state) => {
+    return state.tracks.isNowPlaying;
+  });
+
+  if (!currentTrack) {
+    return <></>;
+  }
+
+  function pauseUnpause() {
+    if (isPlaying) {
+      audioRef.current?.pause();
+      dispatch(setIsNowPlaying(false));
+    } else {
+      audioRef.current?.play();
+      dispatch(setIsNowPlaying(true));
+    }
+  }
+
+  function volumeManipulation(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ): void {
+    if (audioRef.current) {
+      audioRef.current.volume = Number(event.target.value) / 100;
+    }
+  }
+
+  function alertMessage() {
+    alert('Еще не реализовано');
+  }
+
   return (
     <div className={styles.bar}>
+      <audio ref={audioRef} controls src={currentTrack.track_file}></audio>
       <div className={styles.bar__content}>
         <div className={styles.bar__playerProgress}></div>
         <div className={styles.bar__playerBlock}>
           <div className={styles.bar__player}>
             <div className={styles.player__controls}>
               <div className={styles.player__btnPrev}>
-                <svg className={styles.player__btnPrevSvg}>
+                <svg
+                  onClick={alertMessage}
+                  className={styles.player__btnPrevSvg}
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-prev"></use>
                 </svg>
               </div>
               <div className={classNames(styles.player__btnPlay, styles.btn)}>
-                <svg className={styles.player__btnPlaySvg}>
-                  <use xlinkHref="/img/icon/sprite.svg#icon-play"></use>
+                <svg
+                  onClick={pauseUnpause}
+                  className={styles.player__btnPlaySvg}
+                >
+                  <use
+                    xlinkHref={`/img/icon/${isPlaying ? 'pause.svg' : 'sprite.svg#icon-play'}`}
+                  ></use>
                 </svg>
               </div>
               <div className={styles.player__btnNext}>
-                <svg className={styles.player__btnNextSvg}>
+                <svg
+                  onClick={alertMessage}
+                  className={styles.player__btnNextSvg}
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-next"></use>
                 </svg>
               </div>
               <div
                 className={classNames(styles.player__btnRepeat, styles.btnIcon)}
               >
-                <svg className={styles.player__btnRepeatSvg}>
+                <svg
+                  onClick={alertMessage}
+                  className={styles.player__btnRepeatSvg}
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-repeat"></use>
                 </svg>
               </div>
@@ -38,7 +105,10 @@ export default function Bar() {
                   styles.btnIcon,
                 )}
               >
-                <svg className={styles.player__btnShuffleSvg}>
+                <svg
+                  onClick={alertMessage}
+                  className={styles.player__btnShuffleSvg}
+                >
                   <use xlinkHref="/img/icon/sprite.svg#icon-shuffle"></use>
                 </svg>
               </div>
@@ -53,12 +123,12 @@ export default function Bar() {
                 </div>
                 <div className={styles.trackPlay__author}>
                   <Link className={styles.trackPlay__authorLink} href="">
-                    Ты та...
+                    {currentTrack.name}
                   </Link>
                 </div>
                 <div className={styles.trackPlay__album}>
                   <Link className={styles.trackPlay__albumLink} href="">
-                    Баста
+                    {currentTrack.author}
                   </Link>
                 </div>
               </div>
@@ -96,12 +166,14 @@ export default function Bar() {
               </div>
               <div className={classNames(styles.volume__progress, styles.btn)}>
                 <input
+                  onChange={(event) => volumeManipulation(event)}
                   className={classNames(
                     styles.volume__progressLine,
                     styles.btn,
                   )}
                   type="range"
-                  name="range"
+                  min={0}
+                  max={100}
                 />
               </div>
             </div>
