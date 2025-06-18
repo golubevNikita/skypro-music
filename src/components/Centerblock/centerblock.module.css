@@ -245,6 +245,31 @@
   stroke: #4e4e4e;
 }
 
+.track__activeTrackTitleSvg {
+  width: 18px;
+  height: 17px;
+  stroke: #8000ff;
+}
+
+.track__playingActiveTrack {
+  animation: pulse 2s linear infinite;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 0.33;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
 /* В разметке есть класс track__title-text, но самих стилей нет */
 
 .track__titleLink {
