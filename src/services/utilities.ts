@@ -36,3 +36,12 @@ export function formatTime(durationInSeconds: number) {
 
   return `${minutes}:${twoDigitSeconds}`;
 }
+
+export function timeProgerssInfo(
+  currentTime: number,
+  totalTime: number | undefined,
+) {
+  if (totalTime) {
+    return `${formatTime(currentTime)} / ${formatTime(totalTime)}`;
+  }
+}
