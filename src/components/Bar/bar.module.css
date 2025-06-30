@@ -6,6 +6,11 @@
   background: rgba(28, 28, 28, 0.5);
 }
 
+.player__trackLoading {
+  position: absolute;
+  top: -20px;
+}
+
 .bar__content {
   display: -webkit-box;
   display: -ms-flexbox;
@@ -16,11 +21,11 @@
   flex-direction: column;
 }
 
-.bar__playerProgress {
+/* .bar__playerProgress {
   width: 100%;
   height: 5px;
   background: #2e2e2e;
-}
+} */
 
 .bar__playerBlock {
   height: 73px;
@@ -86,6 +91,7 @@
   -webkit-box-align: center;
   -ms-flex-align: center;
   align-items: center;
+  cursor: pointer;
 }
 
 .player__btnPrev {
@@ -144,6 +150,11 @@
   height: 12px;
   fill: transparent;
   stroke: #696969;
+}
+
+.player__btnControlsActive {
+  stroke: rgba(217, 217, 217, 1);
+  fill: rgba(217, 217, 217, 1);
 }
 
 .player__trackPlay {
@@ -209,6 +220,10 @@
   line-height: 24px;
   color: #ffffff;
   white-space: nowrap;
+}
+
+.player__timeInfo {
+  margin-left: 31px;
 }
 
 .trackPlay__album {
@@ -312,6 +327,7 @@
   width: 109px;
   display: flex;
   align-items: center;
+  cursor: pointer;
 }
 
 .volume__progressLine {
@@ -341,9 +357,9 @@
   margin-top: -7px;
 }
 
-.btn {
+/* .btn {
   cursor: pointer;
-}
+} */
 
 .btnIcon:hover svg {
   fill: transparent;
@@ -362,4 +378,64 @@
   fill: #696969;
   stroke: #ffffff;
   cursor: pointer;
+}
+
+.styledProgressInput {
+  --progress-height: 5px;
+  --progress-color: #b672ff;
+  --progress-bg-color: #2e2e2e;
+
+  margin: 0;
+  width: 100%;
+  height: var(--progress-height);
+  appearance: none;
+  cursor: pointer;
+  background: transparent;
+  position: relative;
+  overflow: hidden;
+  transition: 0.2s;
+}
+
+.styledProgressInput:hover {
+  --progress-height: 8px;
+}
+
+.styledProgressInput::-webkit-slider-runnable-track {
+  position: relative;
+  height: var(--progress-height);
+  background: var(--progress-bg-color);
+}
+
+.styledProgressInput::-webkit-slider-thumb {
+  --thumb-height: 10px;
+  --thumb-width: 10px;
+
+  -webkit-appearance: none;
+  appearance: none;
+  width: var(--thumb-width);
+  height: var(--thumb-height);
+  background-color: var(--progress-color);
+  border-radius: 50%;
+  position: relative;
+
+  box-shadow: -100vmax 0 0 100vmax var(--progress-color);
+}
+
+.styledProgressInput::-moz-range-track {
+  width: 100%;
+  height: var(--progress-height);
+  background: var(--progress-bg-color);
+}
+
+.styledProgressInput::-moz-range-thumb {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--progress-color);
+  border: none;
+}
+
+.styledProgressInput::-moz-range-progress {
+  background-color: var(--progress-color);
+  height: var(--progress-height);
 }

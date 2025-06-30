@@ -39,7 +39,13 @@ export default function Centerblock() {
 
           </div> */}
           {data.map((trackItem) => {
-            return <Track key={trackItem._id} trackItem={trackItem} />;
+            return (
+              <Track
+                key={trackItem._id}
+                trackItem={trackItem}
+                playListItem={data}
+              />
+            );
           })}
         </div>
       </div>
