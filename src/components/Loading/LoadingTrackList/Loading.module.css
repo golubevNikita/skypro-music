@@ -1,0 +1,119 @@
+.playlist__item {
+  width: 100%;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.playlist__track {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-pack: justify;
+  -ms-flex-pack: justify;
+  justify-content: space-between;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+}
+
+.track__title {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  gap: 17px;
+  -webkit-box-orient: horizontal;
+  -webkit-box-direction: normal;
+  -ms-flex-direction: row;
+  flex-direction: row;
+  -webkit-box-align: center;
+  -ms-flex-align: center;
+  align-items: center;
+  width: 447px;
+  height: 51px;
+}
+
+.track__titleImage {
+  position: relative;
+  overflow: hidden;
+  background-color: #313131;
+  border-radius: 5px;
+  height: 51px;
+  width: 51px;
+  border-radius: 10%;
+}
+
+.track__titleText {
+  position: relative;
+  overflow: hidden;
+  background-color: #313131;
+  border-radius: 5px;
+  height: 24px;
+  width: 379px;
+  border-radius: 5px;
+}
+
+.track__author {
+  position: relative;
+  overflow: hidden;
+  background-color: #313131;
+  border-radius: 5px;
+  height: 24px;
+  width: 321px;
+  border-radius: 5px;
+}
+
+.track__album {
+  position: relative;
+  overflow: hidden;
+  background-color: #313131;
+  border-radius: 5px;
+  height: 24px;
+  width: 245px;
+  border-radius: 5px;
+}
+
+.track__time {
+  position: relative;
+  overflow: hidden;
+  background-color: #313131;
+  border-radius: 5px;
+  height: 24px;
+  width: 60px;
+  border-radius: 5px;
+}
+
+.track__titleImage::before,
+.track__titleText::before,
+.track__author::before,
+.track__album::before,
+.track__time::before {
+  content: '';
+  position: absolute;
+  z-index: 25;
+  height: 48px;
+  width: 200px;
+  background: linear-gradient(
+    0deg,
+    rgba(49, 49, 49, 1) 0%,
+    rgba(36, 36, 36, 1) 35%,
+    rgba(36, 36, 36, 1) 65%,
+    rgba(49, 49, 49, 1) 100%
+  );
+  filter: blur(3px);
+  border-radius: 5px;
+  transform: rotate(45deg);
+  animation: skeleton-animation 2s linear infinite;
+}
+
+@keyframes skeleton-animation {
+  from {
+    left: -200px;
+  }
+  to {
+    left: 100%;
+  }
+}

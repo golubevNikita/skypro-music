@@ -5,9 +5,19 @@ import { useState } from 'react';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { useAppDispatch } from '@/store/store';
+import {
+  setActiveGenres,
+  setActiveAuthors,
+  setCurrentPlayListName,
+  setFilteredPlayList,
+} from '@/store/features/trackSlice';
+
 import styles from './main.module.css';
 
 export default function Main() {
+  const dispatch = useAppDispatch();
+
   const [burgerMenu, setBurgerMenu] = useState<boolean>(true);
 
   function burgerMenuCloseOpen() {
@@ -21,8 +31,8 @@ export default function Main() {
           className={styles.logo__image}
           src="/img/logo.png"
           alt={'logo'}
-          width={250}
-          height={170}
+          width={113}
+          height={17}
         />
       </div>
       <div className={styles.nav__burger} onClick={burgerMenuCloseOpen}>
@@ -35,7 +45,16 @@ export default function Main() {
         <div className={styles.nav__menu}>
           <ul className={styles.menu__list}>
             <li className={styles.menu__item}>
-              <Link href="#" className={styles.menu__link}>
+              <Link
+                onClick={() => {
+                  dispatch(setActiveGenres([]));
+                  dispatch(setActiveAuthors([]));
+                  dispatch(setCurrentPlayListName('Треки'));
+                  dispatch(setFilteredPlayList());
+                }}
+                href="/music"
+                className={styles.menu__link}
+              >
                 Главное
               </Link>
             </li>

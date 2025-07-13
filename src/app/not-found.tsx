@@ -13,6 +13,7 @@ export default function NotFound() {
             <h2 className={styles.notFound__subTitle}>
               Страница не найдена
               <Image
+                priority={true}
                 className={styles.notFound__smile_image}
                 src="/img/smile_crying.png"
                 alt={'smile'}
@@ -28,7 +29,7 @@ export default function NotFound() {
               или перенесена на другой адрес
             </p>
 
-            <Link className={styles.btn__onMain} href="/">
+            <Link className={styles.btn__onMain} href="/music">
               Вернуться на главную
             </Link>
           </div>

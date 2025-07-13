@@ -16,7 +16,7 @@ import {
 
 import { timeProgerssInfo } from '@/services/utilities';
 
-import { trackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
 
 import styles from './bar.module.css';
 
@@ -41,7 +41,7 @@ export default function Bar() {
     setVolume(Number(event.target.value));
   }
 
-  const currentTrack: trackItemInterface | null = useAppSelector((state) => {
+  const currentTrack: TrackItemInterface | null = useAppSelector((state) => {
     return state.tracks.currentTrack;
   });
 

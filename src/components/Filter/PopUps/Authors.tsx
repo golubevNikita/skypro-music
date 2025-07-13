@@ -1,27 +1,29 @@
 'use client';
 import classNames from 'classnames';
 
+import { useAppSelector } from '@/store/store';
+
 import styles from '../popUps.module.css';
 
 interface AuthorsProps {
-  uniqueAuthors: string[];
-  activeAuthorsItems: string[];
+  activeAuthorsState: string[];
+  setFunction: ([]: string[]) => void;
   setChosenElements: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     setFunction: ([]: string[]) => void,
     arrayState: string[],
   ) => void;
-  setFunction: ([]: string[]) => void;
-  arrayState: string[];
 }
 
 export default function Authors({
-  uniqueAuthors,
-  activeAuthorsItems,
-  setChosenElements,
+  activeAuthorsState,
   setFunction,
-  arrayState,
+  setChosenElements,
 }: AuthorsProps) {
+  const uniqueAuthors: string[] = useAppSelector((state) => {
+    return state.tracks.filters.unique.authors;
+  });
+
   return (
     <div className={styles.authors__wrapper}>
       <div className={styles.authors__container}>
@@ -31,10 +33,10 @@ export default function Authors({
               key={index}
               className={classNames(styles.authors__filterItem, {
                 [styles.authors__filterItem_active]:
-                  activeAuthorsItems.includes(authorEl),
+                  activeAuthorsState.includes(authorEl),
               })}
               onClick={(event) => {
-                setChosenElements(event, setFunction, arrayState);
+                setChosenElements(event, setFunction, activeAuthorsState);
               }}
             >
               {authorEl}

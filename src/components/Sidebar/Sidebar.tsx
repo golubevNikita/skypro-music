@@ -1,56 +1,145 @@
+'use client';
+
 import Image from 'next/image';
 import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+
+import { getAllSelections } from '@/services/tracksApi';
+
+import { useAppDispatch } from '@/store/store';
+import {
+  setActiveGenres,
+  setActiveAuthors,
+  setFilteredPlayList,
+} from '@/store/features/trackSlice';
+
+import { LS_USER } from '@/services/utilities';
+
+import { AllSelectionsPromiseInterface } from '@/sharedInterfaces/sharedInterfaces';
 
 import styles from './sidebar.module.css';
 
 export default function Sidebar() {
+  const dispatch = useAppDispatch();
+  const router = useRouter();
+
+  function userLogout(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    localStorage.removeItem(LS_USER);
+    router.push('/auth/Signin');
+  }
+
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [sidebarSelections, setSidebarSelections] =
+    useState<AllSelectionsPromiseInterface>({
+      success: false,
+      data: [],
+    });
+
+  function clearAllFilters(
+    event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
+  ) {
+    event.stopPropagation();
+
+    dispatch(setActiveGenres([]));
+    dispatch(setActiveAuthors([]));
+    dispatch(setFilteredPlayList());
+  }
+
+  const [localStorageValue, setLocalStorageValue] = useState<string | null>(
+    null,
+  );
+
+  useEffect(() => {
+    setLocalStorageValue(localStorage.getItem(LS_USER));
+
+    async function getSelections() {
+      try {
+        const allSelections = await getAllSelections();
+
+        const existingSelections = allSelections.data.filter(
+          (selection) => selection.items.length !== 0,
+        );
+
+        setSidebarSelections({
+          ...sidebarSelections,
+          success: allSelections.success,
+          data: existingSelections,
+        });
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.log(error);
+          if (error.response) {
+            setErrorMessage(error.response.data.message);
+          } else if (error.request) {
+            setErrorMessage('Подборки временно недоступны, попробуйте позже');
+          } else {
+            setErrorMessage('Подборки временно недоступны, попробуйте позже');
+          }
+        }
+      }
+    }
+
+    getSelections();
+  }, []);
+
+  const sidebarPictures: string[] = [
+    '/img/playlist01.png',
+    '/img/playlist02.png',
+    '/img/playlist03.png',
+  ];
+
+  const localStorageUser = localStorageValue
+    ? JSON.parse(localStorageValue)
+    : 'Ошибка, данные отсутствуют';
+
   return (
     <div className={styles.main__sidebar}>
       <div className={styles.sidebar__personal}>
-        <p className={styles.sidebar__personalName}>Sergey.Ivanov</p>
+        <p className={styles.sidebar__personalName}>
+          {localStorageUser.username}
+        </p>
         <div className={styles.sidebar__icon}>
-          <Link href="/Signin">
+          <div onClick={(event) => userLogout(event)}>
             <svg>
               <use xlinkHref="/img/icon/sprite.svg#logout"></use>
             </svg>
-          </Link>
+          </div>
         </div>
       </div>
       <div className={styles.sidebar__block}>
         <div className={styles.sidebar__list}>
-          <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="#">
-              <Image
-                className={styles.sidebar__img}
-                src="/img/playlist01.png"
-                alt="day's playlist"
-                width={250}
-                height={170}
-              />
-            </Link>
-          </div>
-          <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="#">
-              <Image
-                className={styles.sidebar__img}
-                src="/img/playlist02.png"
-                alt="day's playlist"
-                width={250}
-                height={170}
-              />
-            </Link>
-          </div>
-          <div className={styles.sidebar__item}>
-            <Link className={styles.sidebar__link} href="#">
-              <Image
-                className={styles.sidebar__img}
-                src="/img/playlist03.png"
-                alt="day's playlist"
-                width={250}
-                height={170}
-              />
-            </Link>
-          </div>
+          {sidebarSelections.success ? (
+            sidebarSelections.data.map((selection) => {
+              return (
+                <div key={selection._id} className={styles.sidebar__item}>
+                  <Link
+                    onClick={(event) => {
+                      clearAllFilters(event);
+                    }}
+                    className={styles.sidebar__link}
+                    href={`/music/categories/${selection._id}`}
+                  >
+                    <Image
+                      priority={true}
+                      src={sidebarPictures[Math.floor(Math.random() * 3)]}
+                      alt="day's playlist"
+                      width={250}
+                      height={170}
+                    />
+
+                    <p>{selection.name}</p>
+                  </Link>
+                </div>
+              );
+            })
+          ) : (
+            <p>{errorMessage ? errorMessage : 'Загрузка подборок'}</p>
+          )}
         </div>
       </div>
     </div>

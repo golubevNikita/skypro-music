@@ -1,46 +1,128 @@
-import Link from 'next/link';
+'use client';
+
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { AxiosError } from 'axios';
+
 import classNames from 'classnames';
+
+import { userSignup } from '@/services/authApi';
+
+import { SignupDataInterface } from '@/sharedInterfaces/sharedInterfaces';
+
+import { LS_USER } from '@/services/utilities';
 
 import styles from './auth.module.css';
 
-export default function SignUp() {
+export default function Signup() {
+  const [signupData, setSignupData] = useState<SignupDataInterface>({
+    email: '',
+    password: '',
+    username: '',
+  });
+
+  function onFormInputChange(event: React.ChangeEvent<HTMLInputElement>) {
+    switch (event.currentTarget.name) {
+      case 'login':
+        setSignupData({ ...signupData, email: event.currentTarget.value });
+        break;
+
+      case 'password':
+        setSignupData({ ...signupData, password: event.currentTarget.value });
+        break;
+
+      case 'username':
+        setSignupData({ ...signupData, username: event.currentTarget.value });
+        break;
+    }
+  }
+
+  const router = useRouter();
+  const [errorMessage, setErrorMessage] = useState<string>('');
+  const [loading, setLoading] = useState<boolean>(false);
+
+  function userFormRequest(event: React.MouseEvent<HTMLButtonElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    setErrorMessage('');
+    setLoading(true);
+
+    if (signupData.password.trim().length < 6) {
+      setErrorMessage('Пароль должен быть не менее 6 символов');
+      return;
+    }
+
+    if (
+      !signupData.email.trim() ||
+      !signupData.password.trim() ||
+      !signupData.email.trim()
+    ) {
+      setErrorMessage('Пожалуйста, заполните все поля');
+      return;
+    }
+
+    userSignup(signupData)
+      .then((response) => {
+        localStorage.setItem(LS_USER, JSON.stringify(response.result));
+
+        alert(response.message);
+
+        router.push('/music');
+      })
+      .catch((error) => {
+        if (error instanceof AxiosError) {
+          console.log(error);
+          if (error.response) {
+            setErrorMessage(error.response.data.message);
+          } else if (error.request) {
+            setErrorMessage('Проверьте интернет-соединение и попробуйте позже');
+          } else {
+            setErrorMessage('Неизвестная ошибка');
+          }
+        }
+      })
+      .finally(() => {
+        setLoading(false);
+      });
+  }
+
   return (
     <>
-      <div className={styles.wrapper}>
-        <div className={styles.containerEnter}>
-          <div className={styles.modal__block}>
-            <form className={styles.modal__form}>
-              <Link href="/">
-                <div className={styles.modal__logo}>
-                  <img src="/img/logo_modal.png" alt="logo" />
-                </div>
-              </Link>
-              <input
-                className={classNames(styles.modal__input, styles.login)}
-                type="text"
-                name="login"
-                placeholder="Почта"
-              />
-              <input
-                className={styles.modal__input_signup}
-                type="password"
-                name="password"
-                placeholder="Пароль"
-              />
-              <input
-                className={styles.modal__input}
-                type="password"
-                name="password"
-                placeholder="Повторите пароль"
-              />
-              <div className={styles.errorContainer}>{/*Блок для ошибок*/}</div>
-              <button className={styles.modal__btnSignupEnt}>
-                Зарегистрироваться
-              </button>
-            </form>
-          </div>
-        </div>
-      </div>
+      <input
+        className={classNames(styles.modal__input, styles.login)}
+        type="text"
+        name="login"
+        placeholder="Почта"
+        value={signupData.email}
+        onChange={(event) => onFormInputChange(event)}
+      />
+      <input
+        className={styles.modal__input_signup}
+        type="password"
+        name="password"
+        placeholder="Пароль"
+        value={signupData.password}
+        onChange={(event) => onFormInputChange(event)}
+      />
+      <input
+        className={styles.modal__input}
+        type="text"
+        name="username"
+        placeholder="Имя пользователя"
+        value={signupData.username}
+        onChange={(event) => onFormInputChange(event)}
+      />
+      <div className={styles.errorContainer}>{errorMessage}</div>
+      <button
+        disabled={loading}
+        className={styles.modal__btnSignupEnt}
+        onClick={(event) => {
+          userFormRequest(event);
+        }}
+      >
+        Зарегистрироваться
+      </button>
     </>
   );
 }
