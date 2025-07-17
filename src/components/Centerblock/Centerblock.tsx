@@ -1,18 +1,61 @@
+'use client';
+
+import { ReactNode, useEffect, useState } from 'react';
+import { useParams } from 'next/navigation';
+import { AxiosError } from 'axios';
 import classNames from 'classnames';
+
+import { getSelectionById } from '@/services/tracksApi';
+
+import { useAppDispatch, useAppSelector } from '@/store/store';
+import { setCurrentPlayListName } from '@/store/features/trackSlice';
 
 import Search from './Search/Search';
 import Filter from '../Filter/Filter';
-import Track from './Track/Track';
-
-import { data } from '@/data';
 
 import styles from './centerblock.module.css';
 
-export default function Centerblock() {
+export default function Centerblock({ trackList }: { trackList: ReactNode }) {
+  const params = useParams<{ id: string }>();
+  const dispatch = useAppDispatch();
+
+  const [errorMessage, setErrorMessage] = useState<string>('');
+
+  const currentPlayListName: string = useAppSelector((state) => {
+    return state.tracks.currentPlayListName;
+  });
+
+  useEffect(() => {
+    async function tracksCultivation() {
+      try {
+        if (params.id) {
+          const selection = await getSelectionById(params.id);
+
+          dispatch(setCurrentPlayListName(selection.data.name));
+        }
+      } catch (error) {
+        if (error instanceof AxiosError) {
+          console.log(error);
+          if (error.response) {
+            setErrorMessage(error.response.data.message);
+          } else if (error.request) {
+            setErrorMessage('Проверьте интернет-соединение и попробуйте позже');
+          } else {
+            setErrorMessage('Неизвестная ошибка');
+          }
+        }
+      }
+    }
+
+    tracksCultivation();
+  }, [params.id]);
+
   return (
     <div className={styles.centerblock}>
       <Search />
-      <h2 className={styles.centerblock__h2}>Треки</h2>
+      <h2 className={styles.centerblock__h2}>
+        {errorMessage ? errorMessage : currentPlayListName}
+      </h2>
       <div className={styles.centerblock__filter}>
         <div className={styles.filter__title}>Искать по:</div>
         <Filter />
@@ -35,18 +78,7 @@ export default function Centerblock() {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          {/* <div className={styles.playlist__blur_wrapper}>
-
-          </div> */}
-          {data.map((trackItem) => {
-            return (
-              <Track
-                key={trackItem._id}
-                trackItem={trackItem}
-                playListItem={data}
-              />
-            );
-          })}
+          {errorMessage ? <p>{errorMessage}</p> : trackList}
         </div>
       </div>
     </div>

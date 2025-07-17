@@ -1,27 +1,29 @@
 'use client';
 import classNames from 'classnames';
 
+import { useAppSelector } from '@/store/store';
+
 import styles from '../popUps.module.css';
 
 interface GenresProps {
-  uniqueGenres: string[];
-  activeGenresItems: string[];
+  activeGenresState: string[];
+  setFunction: ([]: string[]) => void;
   setChosenElements: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
     setFunction: ([]: string[]) => void,
     arrayState: string[],
   ) => void;
-  setFunction: ([]: string[]) => void;
-  arrayState: string[];
 }
 
 export default function Genres({
-  uniqueGenres,
-  activeGenresItems,
-  setChosenElements,
+  activeGenresState,
   setFunction,
-  arrayState,
+  setChosenElements,
 }: GenresProps) {
+  const uniqueGenres: string[] = useAppSelector((state) => {
+    return state.tracks.filters.unique.genres;
+  });
+
   return (
     <div className={styles.genres__wrapper}>
       <div className={styles.genres__container}>
@@ -31,10 +33,10 @@ export default function Genres({
               key={index}
               className={classNames(styles.genres__filterItem, {
                 [styles.genres__filterItem_active]:
-                  activeGenresItems.includes(genreEl),
+                  activeGenresState.includes(genreEl),
               })}
               onClick={(event) => {
-                setChosenElements(event, setFunction, arrayState);
+                setChosenElements(event, setFunction, activeGenresState);
               }}
             >
               {genreEl}

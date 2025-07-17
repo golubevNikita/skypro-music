@@ -1,4 +1,4 @@
-import { trackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
 
 export const releaseDatesFilters: string[] = [
   'По умолчанию',
@@ -7,8 +7,8 @@ export const releaseDatesFilters: string[] = [
 ];
 
 export function getUniqueValuesByKey(
-  arr: trackItemInterface[],
-  key: keyof trackItemInterface,
+  arr: TrackItemInterface[],
+  key: keyof TrackItemInterface,
 ): string[] {
   const uniqueValues = new Set<string>();
 
@@ -45,3 +45,5 @@ export function timeProgerssInfo(
     return `${formatTime(currentTime)} / ${formatTime(totalTime)}`;
   }
 }
+
+export const LS_USER = 'localUser';

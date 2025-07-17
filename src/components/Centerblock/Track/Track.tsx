@@ -7,21 +7,17 @@ import Link from 'next/link';
 import { formatTime } from '@/services/utilities';
 
 import { useAppDispatch, useAppSelector } from '@/store/store';
-import {
-  setCurrentTrack,
-  setCurrentPlayList,
-} from '@/store/features/trackSlice';
+import { setCurrentTrack } from '@/store/features/trackSlice';
 
-import { trackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
 
 import styles from '../centerblock.module.css';
 
-interface TrackProps {
-  trackItem: trackItemInterface;
-  playListItem: trackItemInterface[];
-}
-
-export default function Track({ trackItem, playListItem }: TrackProps) {
+export default function Track({
+  trackItem,
+}: {
+  trackItem: TrackItemInterface;
+}) {
   const dispatch = useAppDispatch();
 
   const [likeSong, setLikeSong] = useState<boolean>(false);
@@ -30,7 +26,7 @@ export default function Track({ trackItem, playListItem }: TrackProps) {
     setLikeSong(!likeSong);
   }
 
-  const currentTrack: trackItemInterface | null = useAppSelector((state) => {
+  const currentTrack: TrackItemInterface | null = useAppSelector((state) => {
     return state.tracks.currentTrack;
   });
 
@@ -40,7 +36,6 @@ export default function Track({ trackItem, playListItem }: TrackProps) {
 
   function onClickSetTrack() {
     dispatch(setCurrentTrack(trackItem));
-    dispatch(setCurrentPlayList(playListItem));
   }
 
   return (

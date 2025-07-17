@@ -7,6 +7,7 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 16px;
   -webkit-box-orient: horizontal;
   -webkit-box-direction: normal;
   -ms-flex-direction: row;
@@ -21,20 +22,20 @@
 }
 
 .sidebar__personalName {
-  font-style: normal;
-  font-weight: 400;
-  font-size: 16px;
-  line-height: 24px;
-  color: #ffffff;
-  margin-right: 16px;
+  position: relative;
+  overflow: hidden;
+  height: 24px;
+  width: 190px;
+  background-color: #313131;
 }
 
 .sidebar__icon {
-  width: 43px;
+  position: relative;
+  overflow: hidden;
   height: 43px;
-  background-color: #313131;
+  width: 43px;
   border-radius: 50%;
-  cursor: pointer;
+  background-color: #313131;
 }
 
 .sidebar__block {
@@ -56,6 +57,7 @@
   display: -webkit-box;
   display: -ms-flexbox;
   display: flex;
+  gap: 30px;
   -webkit-box-orient: vertical;
   -webkit-box-direction: normal;
   -ms-flex-direction: column;
@@ -66,34 +68,43 @@
 }
 
 .sidebar__item {
-  width: 250px;
-  height: 170px;
-}
-
-.sidebar__item:not(:last-child) {
-  margin-bottom: 30px;
-}
-
-.sidebar__link {
-  width: 100%;
-  height: 100%;
-
   position: relative;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  overflow: hidden;
+  height: 170px;
+  width: 250px;
+  background-color: #313131;
+}
 
-  cursor: pointer;
+.sidebar__personalName::before,
+.sidebar__icon::before,
+.sidebar__item::before {
+  content: '';
+  position: absolute;
+  z-index: 25;
+  height: 48px;
+  width: 500px;
+  background: linear-gradient(
+    0deg,
+    rgba(49, 49, 49, 1) 0%,
+    rgba(36, 36, 36, 1) 35%,
+    rgba(36, 36, 36, 1) 65%,
+    rgba(49, 49, 49, 1) 100%
+  );
+  filter: blur(3px);
+  border-radius: 5px;
+  transform: rotate(45deg);
+  animation: skeleton-animation 2s linear infinite;
+}
 
-  p {
-    position: absolute;
-    z-index: 25;
-    padding: 25px;
+.sidebar__icon::before {
+  width: 150px;
+}
 
-    font-weight: 400;
-    font-size: 24px;
-    line-height: 28px;
-    letter-spacing: -0.1px;
-    text-align: center;
+@keyframes skeleton-animation {
+  from {
+    left: -500px;
+  }
+  to {
+    left: 100%;
   }
 }
