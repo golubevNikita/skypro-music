@@ -1,27 +1,49 @@
 'use client';
 
 import { useState } from 'react';
-
+import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { useAppDispatch } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setActiveGenres,
   setActiveAuthors,
   setCurrentPlayListName,
   setFilteredPlayList,
+  setFavoriteTracks,
 } from '@/store/features/trackSlice';
+import { clearStorageTokens } from '@/store/features/authSlice';
 
 import styles from './main.module.css';
 
 export default function Main() {
   const dispatch = useAppDispatch();
+  const router = useRouter();
 
   const [burgerMenu, setBurgerMenu] = useState<boolean>(true);
 
+  const access = useAppSelector((state) => state.authentication.access);
+
   function burgerMenuCloseOpen() {
     setBurgerMenu(!burgerMenu);
+  }
+
+  function userLogout(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (event.currentTarget.textContent === 'Войти') {
+      router.push('/auth/Signin');
+    }
+
+    if (event.currentTarget.textContent === 'Выйти') {
+      dispatch(setFavoriteTracks([]));
+      dispatch(setCurrentPlayListName('Треки'));
+      dispatch(clearStorageTokens());
+
+      router.push('/music');
+    }
   }
 
   return (
@@ -58,15 +80,33 @@ export default function Main() {
                 Главное
               </Link>
             </li>
+
+            {access ? (
+              <li className={styles.menu__item}>
+                <Link
+                  onClick={() => {
+                    dispatch(setActiveGenres([]));
+                    dispatch(setActiveAuthors([]));
+                    dispatch(setCurrentPlayListName('Избранное'));
+                    dispatch(setFilteredPlayList());
+                  }}
+                  href={`/music/categories/${'favorite-tracks'}`}
+                  className={styles.menu__link}
+                >
+                  Мой плейлист
+                </Link>
+              </li>
+            ) : (
+              ''
+            )}
+
             <li className={styles.menu__item}>
-              <Link href="#" className={styles.menu__link}>
-                Мой плейлист
-              </Link>
-            </li>
-            <li className={styles.menu__item}>
-              <Link href="../signin.html" className={styles.menu__link}>
-                Выйти
-              </Link>
+              <div
+                onClick={(event) => userLogout(event)}
+                className={styles.menu__link}
+              >
+                {access ? 'Выйти' : 'Войти'}
+              </div>
             </li>
           </ul>
         </div>

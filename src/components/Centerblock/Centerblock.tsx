@@ -28,7 +28,26 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
   useEffect(() => {
     async function tracksCultivation() {
       try {
-        if (params.id) {
+        // if (params.id !== 'favorite-tracks') {
+        //   const selection = await getSelectionById(params.id);
+
+        //   dispatch(setCurrentPlayListName(selection.data.name));
+        // } else {
+        //   dispatch(setCurrentPlayListName('Избранное'));
+        // }
+
+        if (params.id === 'favorite-tracks') {
+          // console.log('favorite-tracks');
+
+          dispatch(setCurrentPlayListName('Избранное'));
+        }
+        if (params.id === undefined) {
+          // console.log('Треки');
+
+          dispatch(setCurrentPlayListName('Треки'));
+        } else {
+          // console.log(params.id);
+
           const selection = await getSelectionById(params.id);
 
           dispatch(setCurrentPlayListName(selection.data.name));

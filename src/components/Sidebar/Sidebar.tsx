@@ -8,14 +8,14 @@ import { AxiosError } from 'axios';
 
 import { getAllSelections } from '@/services/tracksApi';
 
-import { useAppDispatch } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setActiveGenres,
   setActiveAuthors,
   setFilteredPlayList,
+  setFavoriteTracks,
 } from '@/store/features/trackSlice';
-
-import { LS_USER } from '@/services/utilities';
+import { clearStorageTokens } from '@/store/features/authSlice';
 
 import { AllSelectionsPromiseInterface } from '@/sharedInterfaces/sharedInterfaces';
 
@@ -29,7 +29,9 @@ export default function Sidebar() {
     event.preventDefault();
     event.stopPropagation();
 
-    localStorage.removeItem(LS_USER);
+    dispatch(setFavoriteTracks([]));
+    dispatch(clearStorageTokens());
+
     router.push('/auth/Signin');
   }
 
@@ -50,12 +52,12 @@ export default function Sidebar() {
     dispatch(setFilteredPlayList());
   }
 
-  const [localStorageValue, setLocalStorageValue] = useState<string | null>(
-    null,
-  );
+  const [localStorageUser, setLocalStorageUser] = useState<string | null>(null);
+
+  const access = useAppSelector((state) => state.authentication.access);
 
   useEffect(() => {
-    setLocalStorageValue(localStorage.getItem(LS_USER));
+    setLocalStorageUser(localStorage.getItem('username'));
 
     async function getSelections() {
       try {
@@ -85,7 +87,7 @@ export default function Sidebar() {
     }
 
     getSelections();
-  }, []);
+  }, [access]);
 
   const sidebarPictures: string[] = [
     '/img/playlist01.png',
@@ -93,15 +95,11 @@ export default function Sidebar() {
     '/img/playlist03.png',
   ];
 
-  const localStorageUser = localStorageValue
-    ? JSON.parse(localStorageValue)
-    : 'Ошибка, данные отсутствуют';
-
   return (
     <div className={styles.main__sidebar}>
       <div className={styles.sidebar__personal}>
         <p className={styles.sidebar__personalName}>
-          {localStorageUser.username}
+          {localStorageUser || 'Нет авторизации'}
         </p>
         <div className={styles.sidebar__icon}>
           <div onClick={(event) => userLogout(event)}>

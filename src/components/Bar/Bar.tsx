@@ -12,7 +12,10 @@ import {
   setNextTrack,
   setPreviousTrack,
   setIsShuffledPlayList,
+  setCurrentTrack,
 } from '@/store/features/trackSlice';
+
+import { useLikeDislikeHook } from '@/hooks/useLikeDislikeHook';
 
 import { timeProgerssInfo } from '@/services/utilities';
 
@@ -45,6 +48,10 @@ export default function Bar() {
     return state.tracks.currentTrack;
   });
 
+  const favoriteTracks: TrackItemInterface[] = useAppSelector((state) => {
+    return state.tracks.favoriteTracks;
+  });
+
   const isPlaying: boolean = useAppSelector((state) => {
     return state.tracks.isNowPlaying;
   });
@@ -65,6 +72,20 @@ export default function Bar() {
 
   function nextTrack() {
     dispatch(setNextTrack());
+  }
+
+  function nextFavoriteTrack() {
+    if (currentTrack) {
+      const currentTrackIndex: number = favoriteTracks.findIndex(
+        (el) => el._id === currentTrack._id,
+      );
+
+      if (favoriteTracks.length !== currentTrackIndex + 1) {
+        dispatch(setCurrentTrack(favoriteTracks[currentTrackIndex + 1]));
+      } else {
+        dispatch(setCurrentTrack(favoriteTracks[0]));
+      }
+    }
   }
 
   function previousTrack() {
@@ -90,6 +111,9 @@ export default function Bar() {
   function shuffleTracks() {
     dispatch(setIsShuffledPlayList());
   }
+
+  const { isLoading, errorMessage, toggleLike, isLike } =
+    useLikeDislikeHook(currentTrack);
 
   useEffect(() => {
     if (audioRef.current) {
@@ -207,27 +231,27 @@ export default function Bar() {
                 </div>
               </div>
 
-              <div className={styles.trackPlay__dislike}>
-                <div
-                  className={classNames(
-                    styles.player__btnShuffle,
-                    styles.btnIcon,
-                  )}
+              <div className={styles.trackPlay__likeDislike}>
+                <svg
+                  aria-disabled={isLoading}
+                  className={classNames(styles.trackPlay__likeSvg, {
+                    [styles.trackPlay__likeSvg_active]: isLike,
+                    [styles.trackPlay__likeSvg_loading]: isLoading,
+                  })}
                 >
-                  <svg className={styles.trackPlay__likeSvg}>
-                    <use xlinkHref="/img/icon/sprite.svg#icon-like"></use>
-                  </svg>
-                </div>
-                <div
-                  className={classNames(
-                    styles.trackPlay__dislike,
-                    styles.btnIcon,
-                  )}
-                >
-                  <svg className={styles.trackPlay__dislikeSvg}>
-                    <use xlinkHref="/img/icon/sprite.svg#icon-dislike"></use>
-                  </svg>
-                </div>
+                  <use
+                    onClick={(event) => {
+                      toggleLike(event);
+
+                      if (isLike) {
+                        nextFavoriteTrack();
+                      }
+                    }}
+                    xlinkHref="/img/icon/sprite.svg#icon-like"
+                  ></use>
+                </svg>
+
+                <span>{errorMessage}</span>
               </div>
             </div>
 
@@ -242,13 +266,10 @@ export default function Bar() {
                   <use xlinkHref="/img/icon/sprite.svg#icon-volume"></use>
                 </svg>
               </div>
-              <div className={classNames(styles.volume__progress, styles.btn)}>
+              <div className={classNames(styles.volume__progress)}>
                 <input
                   onChange={(event) => volumeManipulation(event)}
-                  className={classNames(
-                    styles.volume__progressLine,
-                    styles.btn,
-                  )}
+                  className={classNames(styles.volume__progressLine)}
                   type="range"
                   min={0}
                   max={100}

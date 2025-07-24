@@ -4,22 +4,28 @@ import { useEffect, useState } from 'react';
 import { useParams } from 'next/navigation';
 import { AxiosError } from 'axios';
 
-import { getAllTracks, getSelectionById } from '@/services/tracksApi';
+import {
+  getAllTracks,
+  getSelectionById,
+  getAllFavoriteTracks,
+} from '@/services/tracksApi';
 
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setCurrentPlayList,
   setUniqueFilters,
   setSelectionSequence,
+  setFavoriteTracks,
 } from '@/store/features/trackSlice';
 
 import Track from '../Track/Track';
 
 import { getUniqueValuesByKey } from '@/services/utilities';
+import { reAuthentication } from '@/services/reAuthentication';
 
 import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
 
-export default function TrackList({ isSelection }: { isSelection: boolean }) {
+export default function TrackList({ selection }: { selection: string }) {
   const params = useParams<{ id: string }>();
   const dispatch = useAppDispatch();
 
@@ -29,11 +35,42 @@ export default function TrackList({ isSelection }: { isSelection: boolean }) {
     return state.tracks.currentPlayList;
   });
 
+  const favoriteTracks: TrackItemInterface[] = useAppSelector((state) => {
+    return state.tracks.favoriteTracks;
+  });
+
   const filteredTracks: TrackItemInterface[] | null = useAppSelector(
     (state) => {
       return state.tracks.filteredPlayList;
     },
   );
+
+  const { access, refresh } = useAppSelector((state) => state.authentication);
+
+  useEffect(() => {
+    async function initialTracksState() {
+      const allTracks = await getAllTracks();
+      if (access) {
+        reAuthentication(
+          (newToken) => getAllFavoriteTracks(newToken || access),
+          refresh,
+          dispatch,
+        ).then((response) => {
+          const favoriteSelectionTrackIds = response.data.map(
+            (item) => item._id,
+          );
+
+          const currentSelection: TrackItemInterface[] = allTracks.data.filter(
+            (track) => favoriteSelectionTrackIds.includes(track._id),
+          );
+
+          dispatch(setFavoriteTracks(currentSelection));
+        });
+      }
+    }
+
+    initialTracksState();
+  }, []);
 
   useEffect(() => {
     async function tracksCultivation() {
@@ -51,7 +88,7 @@ export default function TrackList({ isSelection }: { isSelection: boolean }) {
           setSelectionSequence(allTracks.data.map((track) => track._id)),
         );
 
-        if (isSelection && params.id) {
+        if (selection === 'selection') {
           const selection = await getSelectionById(params.id);
 
           const selectionTracksIds = selection.data.items;
@@ -71,6 +108,34 @@ export default function TrackList({ isSelection }: { isSelection: boolean }) {
             setSelectionSequence(currentSelection.map((track) => track._id)),
           );
         }
+
+        if (selection === 'favorite-tracks' && access) {
+          reAuthentication(
+            (newToken) => getAllFavoriteTracks(newToken || access),
+            refresh,
+            dispatch,
+          ).then((response) => {
+            const favoriteSelectionTrackIds = response.data.map(
+              (item) => item._id,
+            );
+
+            const currentSelection: TrackItemInterface[] =
+              allTracks.data.filter((track) =>
+                favoriteSelectionTrackIds.includes(track._id),
+              );
+
+            dispatch(setCurrentPlayList(currentSelection));
+            dispatch(
+              setUniqueFilters({
+                authors: getUniqueValuesByKey(currentSelection, 'author'),
+                genres: getUniqueValuesByKey(currentSelection, 'genre'),
+              }),
+            );
+            dispatch(
+              setSelectionSequence(currentSelection.map((track) => track._id)),
+            );
+          });
+        }
       } catch (error) {
         if (error instanceof AxiosError) {
           console.log(error);
@@ -86,7 +151,7 @@ export default function TrackList({ isSelection }: { isSelection: boolean }) {
     }
 
     tracksCultivation();
-  }, [isSelection, params.id]);
+  }, [favoriteTracks, selection, params.id]);
 
   return (
     errorMessage ||

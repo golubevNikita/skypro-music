@@ -1,13 +1,15 @@
 'use client';
 
-import { useState } from 'react';
 import classNames from 'classnames';
+
 import Link from 'next/link';
 
 import { formatTime } from '@/services/utilities';
 
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import { setCurrentTrack } from '@/store/features/trackSlice';
+
+import { useLikeDislikeHook } from '@/hooks/useLikeDislikeHook';
 
 import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
 
@@ -20,11 +22,8 @@ export default function Track({
 }) {
   const dispatch = useAppDispatch();
 
-  const [likeSong, setLikeSong] = useState<boolean>(false);
-
-  function toLikeSong() {
-    setLikeSong(!likeSong);
-  }
+  const { isLoading, errorMessage, toggleLike, isLike } =
+    useLikeDislikeHook(trackItem);
 
   const currentTrack: TrackItemInterface | null = useAppSelector((state) => {
     return state.tracks.currentTrack;
@@ -36,6 +35,28 @@ export default function Track({
 
   function onClickSetTrack() {
     dispatch(setCurrentTrack(trackItem));
+  }
+
+  const favoriteTracks: TrackItemInterface[] = useAppSelector((state) => {
+    return state.tracks.favoriteTracks;
+  });
+
+  function nextTrack() {
+    if (currentTrack) {
+      const currentTrackIndex: number = favoriteTracks.findIndex(
+        (el) => el._id === currentTrack._id,
+      );
+
+      if (favoriteTracks.length !== currentTrackIndex + 1) {
+        dispatch(setCurrentTrack(favoriteTracks[currentTrackIndex + 1]));
+      } else {
+        dispatch(setCurrentTrack(favoriteTracks[0]));
+      }
+    }
+  }
+
+  if (errorMessage) {
+    console.log(errorMessage);
   }
 
   return (
@@ -71,19 +92,26 @@ export default function Track({
         </div>
         <div className={styles.track__album}>
           <Link className={styles.track__albumLink} href="">
-            {trackItem.album}
+            {errorMessage ? errorMessage : trackItem.album}
           </Link>
         </div>
         <div className={styles.track__time}>
           <svg
+            aria-disabled={isLoading}
             className={classNames(styles.track__timeSvg, {
-              [styles.track__timeSvg_active]: likeSong === true,
+              [styles.track__timeSvg_active]: isLike,
+              [styles.track__timeSvg_loading]: isLoading,
             })}
           >
             <use
-              onClick={toLikeSong}
+              onClick={(event) => {
+                toggleLike(event);
+
+                if (isLike) {
+                  nextTrack();
+                }
+              }}
               xlinkHref="/img/icon/sprite.svg#icon-like"
-              style={{ cursor: 'pointer' }}
             ></use>
           </svg>
           <span className={styles.track__timeText}>

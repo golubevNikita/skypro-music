@@ -27,3 +27,35 @@ export function getSelectionById(
     return response.data;
   });
 }
+
+export function addLike(access: string, id: number) {
+  return axios.post(
+    URL_TRACKS + `/catalog/track/${id}/favorite/`,
+    {},
+    {
+      headers: {
+        Authorization: `Bearer ${access}`,
+      },
+    },
+  );
+}
+
+export function removeLike(access: string, id: number) {
+  return axios.delete(URL_TRACKS + `/catalog/track/${id}/favorite/`, {
+    headers: {
+      Authorization: `Bearer ${access}`,
+    },
+  });
+}
+
+export function getAllFavoriteTracks(
+  access: string,
+): Promise<TrackItemsPromiseInterface> {
+  return axios(URL_TRACKS + '/catalog/track/favorite/all/', {
+    headers: {
+      Authorization: `Bearer ${access}`,
+    },
+  }).then((response) => {
+    return response.data;
+  });
+}

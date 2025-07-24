@@ -13,6 +13,9 @@ interface initialState {
   // текущий плейлист, устанавливается как плейлист по умолчанию
   // при первом рендере, выборе какой-либо подборки или сброшенных фильтрах
 
+  favoriteTracks: TrackItemInterface[];
+  // плейлист понравившихся треков
+
   selectionSequence: number[];
   // порядок ID треков по умолчанию: устанавливается при API запросе треков и никак не фильтруется,
   // в дальнейшем используется для возврата порядка треков в исходную последовательность
@@ -55,6 +58,7 @@ const initialState: initialState = {
   currentTrack: null,
   isNowPlaying: false,
   currentPlayList: [],
+  favoriteTracks: [],
   selectionSequence: [],
   tracksSequence: [],
   filteredPlayList: null,
@@ -95,6 +99,22 @@ const trackSlice = createSlice({
       state.shuffledPlayList = state.currentPlayList.toSorted(
         () => Math.random() - 0.5,
       );
+    },
+
+    addLikedTracks: (state, action: PayloadAction<TrackItemInterface>) => {
+      state.favoriteTracks = [...state.favoriteTracks, action.payload];
+    },
+
+    setFavoriteTracks: (state, action: PayloadAction<TrackItemInterface[]>) => {
+      state.favoriteTracks = action.payload;
+    },
+
+    removeLikedTracks: (state, action: PayloadAction<TrackItemInterface>) => {
+      const newfavoriteTracks = state.favoriteTracks.filter(
+        (item) => item._id !== action.payload._id,
+      );
+
+      state.favoriteTracks = newfavoriteTracks;
     },
 
     setSelectionSequence: (state, action: PayloadAction<number[]>) => {
@@ -328,6 +348,9 @@ export const {
   setCurrentTrack,
   setIsNowPlaying,
   setCurrentPlayList,
+  addLikedTracks,
+  setFavoriteTracks,
+  removeLikedTracks,
   setSelectionSequence,
   setTracksSequence,
   setCurrentPlayListName,
