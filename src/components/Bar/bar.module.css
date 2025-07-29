@@ -268,14 +268,6 @@
 
   margin-left: 29px;
   padding: 5px;
-
-  svg {
-    cursor: pointer;
-  }
-
-  span {
-    margin-left: 5px;
-  }
 }
 
 /* такого класса нет во всём проекте
@@ -286,6 +278,8 @@
   height: 12px;
   fill: transparent;
   stroke: #696969;
+
+  cursor: pointer;
 }
 
 .trackPlay__likeSvg_active {

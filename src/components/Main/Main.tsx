@@ -11,7 +11,7 @@ import {
   setActiveAuthors,
   setCurrentPlayListName,
   setFilteredPlayList,
-  setFavoriteTracks,
+  setFavoritePlayList,
 } from '@/store/features/trackSlice';
 import { clearStorageTokens } from '@/store/features/authSlice';
 
@@ -38,7 +38,7 @@ export default function Main() {
     }
 
     if (event.currentTarget.textContent === 'Выйти') {
-      dispatch(setFavoriteTracks([]));
+      dispatch(setFavoritePlayList([]));
       dispatch(setCurrentPlayListName('Треки'));
       dispatch(clearStorageTokens());
 
@@ -71,8 +71,7 @@ export default function Main() {
                 onClick={() => {
                   dispatch(setActiveGenres([]));
                   dispatch(setActiveAuthors([]));
-                  dispatch(setCurrentPlayListName('Треки'));
-                  dispatch(setFilteredPlayList());
+                  dispatch(setFilteredPlayList([]));
                 }}
                 href="/music"
                 className={styles.menu__link}
@@ -87,8 +86,7 @@ export default function Main() {
                   onClick={() => {
                     dispatch(setActiveGenres([]));
                     dispatch(setActiveAuthors([]));
-                    dispatch(setCurrentPlayListName('Избранное'));
-                    dispatch(setFilteredPlayList());
+                    dispatch(setFilteredPlayList([]));
                   }}
                   href={`/music/categories/${'favorite-tracks'}`}
                   className={styles.menu__link}

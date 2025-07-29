@@ -15,20 +15,18 @@ import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
 import styles from '../popUps.module.css';
 
 interface ReleaseDatesProps {
-  activeFilterItem: string;
-  chooseActiveElement: (
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) => void;
+  chosenSequence: string;
+  chooseSequence: (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => void;
 }
 
 export default function ReleaseDates({
-  activeFilterItem,
-  chooseActiveElement,
+  chosenSequence,
+  chooseSequence,
 }: ReleaseDatesProps) {
   const dispatch = useAppDispatch();
 
   const tracks: TrackItemInterface[] = useAppSelector((state) => {
-    return state.tracks.currentPlayList;
+    return state.tracks.pagePlayList;
   });
 
   function setSequence(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
@@ -64,7 +62,7 @@ export default function ReleaseDates({
       dispatch(setSortedPlayList());
     }
 
-    if (event.currentTarget.textContent === activeFilterItem) {
+    if (event.currentTarget.textContent === chosenSequence) {
       dispatch(setTracksSequence([]));
       dispatch(setSortedPlayList());
     }
@@ -79,10 +77,10 @@ export default function ReleaseDates({
               key={index}
               className={classNames(styles.releaseDates__filterItem, {
                 [styles.releaseDates__filterItem_active]:
-                  activeFilterItem === filterItem,
+                  chosenSequence === filterItem,
               })}
               onClick={(event) => {
-                chooseActiveElement(event);
+                chooseSequence(event);
                 setSequence(event);
               }}
             >

@@ -7,8 +7,6 @@ import {
   setStorageRefreshToken,
 } from '@/store/features/authSlice';
 
-// import { LS_USER, LS_TOKENS } from '@/services/utilities';
-
 export function useAuthHook() {
   const dispatch = useAppDispatch();
 
@@ -16,8 +14,6 @@ export function useAuthHook() {
     const username = localStorage.getItem('username') || '';
     const access = localStorage.getItem('access') || '';
     const refresh = localStorage.getItem('refresh') || '';
-
-    console.log('useAuthHook');
 
     dispatch(setStorageUsername(username));
     dispatch(setStorageAccessToken(access));

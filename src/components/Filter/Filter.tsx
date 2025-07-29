@@ -11,25 +11,31 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setActiveGenres,
   setActiveAuthors,
-  setFilteredPlayList,
   setTracksSequence,
+  setFiltersApplication,
 } from '@/store/features/trackSlice';
+
+import { getUniqueValuesByKey } from '@/services/utilities';
 
 import styles from './popUps.module.css';
 
 export default function Filter() {
+  const dispatch = useAppDispatch();
+
   const [authorsPopUp, setAuthorsPopUp] = useState<boolean>(false);
   const [releaseDatesPopUp, setReleaseDatesPopUp] = useState<boolean>(false);
   const [genresPopUp, setGenresPopUp] = useState<boolean>(false);
 
-  const dispatch = useAppDispatch();
-
   const [activeAuthorsState, setActiveAuthorsState] = useState<string[]>([]);
+  const [chosenSequence, setChosenSequence] = useState<string>('');
   const [activeGenresState, setActiveGenresState] = useState<string[]>([]);
 
-  const currentPlayListName: string = useAppSelector((state) => {
-    return state.tracks.currentPlayListName;
-  });
+  const { currentPlayListName, pagePlayList } = useAppSelector(
+    (state) => state.tracks,
+  );
+
+  const uniqueAuthors: string[] = getUniqueValuesByKey(pagePlayList, 'author');
+  const uniqueGenres: string[] = getUniqueValuesByKey(pagePlayList, 'genre');
 
   function popUpsCloseOpen(
     popUp: boolean,
@@ -59,29 +65,27 @@ export default function Filter() {
     setGenresPopUp(false);
   }
 
-  const uniqueAuthors: string[] = useAppSelector((state) => {
-    return state.tracks.filters.unique.authors;
-  });
-
+  // Функция установки активных фильтров (несколько элементов)
   function setChosenElements(
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    setFunction: ([]: string[]) => void,
+    setStateFunction: ([]: string[]) => void,
     arrayState: string[],
   ): void {
     event.preventDefault();
     event.stopPropagation();
 
+    // Определяем, какую функцию будем использовать
     const selectedFilter = event.currentTarget.textContent;
+    const actionFunction = uniqueAuthors.find((el) => el === selectedFilter)
+      ? setActiveAuthors
+      : setActiveGenres;
 
+    // Проверка, когда выбранный элемент уже есть в массиве, при этом массив содержит всего один элемент
     if (selectedFilter === arrayState.toString()) {
-      // Проверка, когда выбранный элемент уже есть в массиве, при этом массив содержит всего один элемент
-      setFunction([]);
-      dispatch(
-        uniqueAuthors.find((el) => el === selectedFilter)
-          ? setActiveAuthors([])
-          : setActiveGenres([]),
-      );
-      dispatch(setFilteredPlayList());
+      setStateFunction([]);
+
+      dispatch(actionFunction([]));
+      dispatch(setFiltersApplication());
       return;
     }
 
@@ -100,53 +104,42 @@ export default function Filter() {
           [],
         );
 
-        setFunction(removeItem);
-        dispatch(
-          uniqueAuthors.find((el) => el === selectedFilter)
-            ? setActiveAuthors(removeItem)
-            : setActiveGenres(removeItem),
-        );
+        setStateFunction(removeItem);
+        dispatch(actionFunction(removeItem));
 
-        dispatch(setFilteredPlayList());
+        dispatch(setFiltersApplication());
         return;
 
         // Действие, если выбранного элемента нет в массиве
       } else {
-        setFunction([...arrayState, selectedFilter]);
+        setStateFunction([...arrayState, selectedFilter]);
+        dispatch(actionFunction([...arrayState, selectedFilter]));
 
-        dispatch(
-          uniqueAuthors.find((el) => el === selectedFilter)
-            ? setActiveAuthors([...arrayState, selectedFilter])
-            : setActiveGenres([...arrayState, selectedFilter]),
-        );
-
-        dispatch(setFilteredPlayList());
+        dispatch(setFiltersApplication());
         return;
       }
     }
   }
 
-  const [activeFilterItem, setActiveFilterItem] = useState<string>('');
-
-  function chooseActiveElement(
-    event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-  ) {
+  // Функция установки активных фильтров (один элемент)
+  function chooseSequence(event: React.MouseEvent<HTMLDivElement, MouseEvent>) {
     event.preventDefault();
     event.stopPropagation();
 
-    if (event.currentTarget.textContent === activeFilterItem) {
-      setActiveFilterItem('');
+    if (event.currentTarget.textContent === chosenSequence) {
+      setChosenSequence('');
       dispatch(setTracksSequence([]));
       return;
     }
     if (event.currentTarget.textContent) {
-      setActiveFilterItem(event.currentTarget.textContent);
+      setChosenSequence(event.currentTarget.textContent);
       return;
     }
   }
 
   useEffect(() => {
     setActiveAuthorsState([]);
+    setActiveGenresState([]);
   }, [currentPlayListName]);
 
   return (
@@ -182,8 +175,9 @@ export default function Filter() {
         исполнителю
         {authorsPopUp ? (
           <Authors
+            uniqueAuthors={uniqueAuthors}
             activeAuthorsState={activeAuthorsState}
-            setFunction={setActiveAuthorsState}
+            setStateFunction={setActiveAuthorsState}
             setChosenElements={setChosenElements}
           />
         ) : (
@@ -193,13 +187,13 @@ export default function Filter() {
 
       <div
         className={classNames(styles.filter__button, {
-          [styles.filter__button_active]: activeFilterItem !== '',
+          [styles.filter__button_active]: chosenSequence !== '',
         })}
         onClick={() => {
           popUpsCloseOpen(releaseDatesPopUp, setReleaseDatesPopUp);
         }}
       >
-        {activeFilterItem ? (
+        {chosenSequence ? (
           <div className={styles.filter__notation}>
             <div className={styles.filter__notation_content}></div>
           </div>
@@ -209,8 +203,8 @@ export default function Filter() {
         году выпуска
         {releaseDatesPopUp ? (
           <ReleaseDates
-            activeFilterItem={activeFilterItem}
-            chooseActiveElement={chooseActiveElement}
+            chosenSequence={chosenSequence}
+            chooseSequence={chooseSequence}
           />
         ) : (
           ''
@@ -237,8 +231,9 @@ export default function Filter() {
         жанру
         {genresPopUp ? (
           <Genres
+            uniqueGenres={uniqueGenres}
             activeGenresState={activeGenresState}
-            setFunction={setActiveGenresState}
+            setStateFunction={setActiveGenresState}
             setChosenElements={setChosenElements}
           />
         ) : (

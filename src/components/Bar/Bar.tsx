@@ -19,8 +19,6 @@ import { useLikeDislikeHook } from '@/hooks/useLikeDislikeHook';
 
 import { timeProgerssInfo } from '@/services/utilities';
 
-import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
-
 import styles from './bar.module.css';
 
 export default function Bar() {
@@ -44,24 +42,16 @@ export default function Bar() {
     setVolume(Number(event.target.value));
   }
 
-  const currentTrack: TrackItemInterface | null = useAppSelector((state) => {
-    return state.tracks.currentTrack;
-  });
-
-  const favoriteTracks: TrackItemInterface[] = useAppSelector((state) => {
-    return state.tracks.favoriteTracks;
-  });
-
-  const isPlaying: boolean = useAppSelector((state) => {
-    return state.tracks.isNowPlaying;
-  });
+  const { currentTrack, isNowPlaying, favoritePlayList } = useAppSelector(
+    (state) => state.tracks,
+  );
 
   const [currentTime, setCurrentTime] = useState<number>(0);
 
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   function pauseUnpause() {
-    if (isPlaying) {
+    if (isNowPlaying) {
       audioRef.current?.pause();
       dispatch(setIsNowPlaying(false));
     } else {
@@ -76,14 +66,14 @@ export default function Bar() {
 
   function nextFavoriteTrack() {
     if (currentTrack) {
-      const currentTrackIndex: number = favoriteTracks.findIndex(
+      const currentTrackIndex: number = favoritePlayList.findIndex(
         (el) => el._id === currentTrack._id,
       );
 
-      if (favoriteTracks.length !== currentTrackIndex + 1) {
-        dispatch(setCurrentTrack(favoriteTracks[currentTrackIndex + 1]));
+      if (favoritePlayList.length !== currentTrackIndex + 1) {
+        dispatch(setCurrentTrack(favoritePlayList[currentTrackIndex + 1]));
       } else {
-        dispatch(setCurrentTrack(favoriteTracks[0]));
+        dispatch(setCurrentTrack(favoritePlayList[0]));
       }
     }
   }
@@ -171,7 +161,7 @@ export default function Bar() {
               <div onClick={pauseUnpause} className={styles.player__btnPlay}>
                 <svg className={styles.player__btnPlaySvg}>
                   <use
-                    xlinkHref={`/img/icon/${isPlaying ? 'pause.svg' : 'sprite.svg#icon-play'}`}
+                    xlinkHref={`/img/icon/${isNowPlaying ? 'pause.svg' : 'sprite.svg#icon-play'}`}
                   ></use>
                 </svg>
               </div>
@@ -241,6 +231,10 @@ export default function Bar() {
                 >
                   <use
                     onClick={(event) => {
+                      if (errorMessage) {
+                        alert(errorMessage);
+                      }
+
                       toggleLike(event);
 
                       if (isLike) {
@@ -250,8 +244,6 @@ export default function Bar() {
                     xlinkHref="/img/icon/sprite.svg#icon-like"
                   ></use>
                 </svg>
-
-                <span>{errorMessage}</span>
               </div>
             </div>
 

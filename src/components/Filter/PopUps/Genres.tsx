@@ -1,28 +1,29 @@
-'use client';
+// 'use client';
 import classNames from 'classnames';
 
-import { useAppSelector } from '@/store/store';
+// import { useAppDispatch } from '@/store/store';
+// import { setFilteredPlayList } from '@/store/features/trackSlice';
 
 import styles from '../popUps.module.css';
 
 interface GenresProps {
+  uniqueGenres: string[];
   activeGenresState: string[];
-  setFunction: ([]: string[]) => void;
+  setStateFunction: ([]: string[]) => void;
   setChosenElements: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    setFunction: ([]: string[]) => void,
+    setStateFunction: ([]: string[]) => void,
     arrayState: string[],
   ) => void;
 }
 
 export default function Genres({
+  uniqueGenres,
   activeGenresState,
-  setFunction,
+  setStateFunction,
   setChosenElements,
 }: GenresProps) {
-  const uniqueGenres: string[] = useAppSelector((state) => {
-    return state.tracks.filters.unique.genres;
-  });
+  // const dispatch = useAppDispatch();
 
   return (
     <div className={styles.genres__wrapper}>
@@ -36,7 +37,8 @@ export default function Genres({
                   activeGenresState.includes(genreEl),
               })}
               onClick={(event) => {
-                setChosenElements(event, setFunction, activeGenresState);
+                // dispatch(setFilteredPlayList());
+                setChosenElements(event, setStateFunction, activeGenresState);
               }}
             >
               {genreEl}

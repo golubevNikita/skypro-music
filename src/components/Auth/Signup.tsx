@@ -74,14 +74,12 @@ export default function Signup() {
 
     userSignup(signupData)
       .then((response) => {
-        // localStorage.setItem(LS_USER, JSON.stringify(response.result));
         dispatch(setStorageUsername(response.result.username));
         alert(response.message);
 
         return getBothTokens(signupData);
       })
       .then((response) => {
-        // localStorage.setItem(LS_TOKENS, JSON.stringify(response));
         dispatch(setStorageAccessToken(response.access));
         dispatch(setStorageRefreshToken(response.refresh));
 

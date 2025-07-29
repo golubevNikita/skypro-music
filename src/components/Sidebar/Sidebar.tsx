@@ -13,7 +13,7 @@ import {
   setActiveGenres,
   setActiveAuthors,
   setFilteredPlayList,
-  setFavoriteTracks,
+  setFavoritePlayList,
 } from '@/store/features/trackSlice';
 import { clearStorageTokens } from '@/store/features/authSlice';
 
@@ -25,22 +25,25 @@ export default function Sidebar() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  function userLogout(event: React.MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    dispatch(setFavoriteTracks([]));
-    dispatch(clearStorageTokens());
-
-    router.push('/auth/Signin');
-  }
+  const access = useAppSelector((state) => state.authentication.access);
 
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [localStorageUser, setLocalStorageUser] = useState<string | null>(null);
   const [sidebarSelections, setSidebarSelections] =
     useState<AllSelectionsPromiseInterface>({
       success: false,
       data: [],
     });
+
+  function userLogout(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    dispatch(setFavoritePlayList([]));
+    dispatch(clearStorageTokens());
+
+    router.push('/auth/Signin');
+  }
 
   function clearAllFilters(
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -49,12 +52,8 @@ export default function Sidebar() {
 
     dispatch(setActiveGenres([]));
     dispatch(setActiveAuthors([]));
-    dispatch(setFilteredPlayList());
+    dispatch(setFilteredPlayList([]));
   }
-
-  const [localStorageUser, setLocalStorageUser] = useState<string | null>(null);
-
-  const access = useAppSelector((state) => state.authentication.access);
 
   useEffect(() => {
     setLocalStorageUser(localStorage.getItem('username'));

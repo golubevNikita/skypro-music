@@ -21,11 +21,13 @@ interface LikeDislikeHookInterface {
 export const useLikeDislikeHook = (
   track: TrackItemInterface | null,
 ): LikeDislikeHookInterface => {
-  const { favoriteTracks } = useAppSelector((state) => state.tracks);
+  const favoritePlayList = useAppSelector(
+    (state) => state.tracks.favoritePlayList,
+  );
   const { access, refresh } = useAppSelector((state) => state.authentication);
   const dispatch = useAppDispatch();
 
-  const isLike = favoriteTracks.some((item) => item._id === track?._id);
+  const isLike = favoritePlayList.some((item) => item._id === track?._id);
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 

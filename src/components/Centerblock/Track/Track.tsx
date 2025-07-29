@@ -1,8 +1,6 @@
 'use client';
-
-import classNames from 'classnames';
-
 import Link from 'next/link';
+import classNames from 'classnames';
 
 import { formatTime } from '@/services/utilities';
 
@@ -25,38 +23,26 @@ export default function Track({
   const { isLoading, errorMessage, toggleLike, isLike } =
     useLikeDislikeHook(trackItem);
 
-  const currentTrack: TrackItemInterface | null = useAppSelector((state) => {
-    return state.tracks.currentTrack;
-  });
-
-  const isPlaying: boolean | null = useAppSelector((state) => {
-    return state.tracks.isNowPlaying;
-  });
+  const { currentTrack, isNowPlaying, favoritePlayList } = useAppSelector(
+    (state) => state.tracks,
+  );
 
   function onClickSetTrack() {
     dispatch(setCurrentTrack(trackItem));
   }
 
-  const favoriteTracks: TrackItemInterface[] = useAppSelector((state) => {
-    return state.tracks.favoriteTracks;
-  });
-
   function nextTrack() {
     if (currentTrack) {
-      const currentTrackIndex: number = favoriteTracks.findIndex(
+      const currentTrackIndex: number = favoritePlayList.findIndex(
         (el) => el._id === currentTrack._id,
       );
 
-      if (favoriteTracks.length !== currentTrackIndex + 1) {
-        dispatch(setCurrentTrack(favoriteTracks[currentTrackIndex + 1]));
+      if (favoritePlayList.length !== currentTrackIndex + 1) {
+        dispatch(setCurrentTrack(favoritePlayList[currentTrackIndex + 1]));
       } else {
-        dispatch(setCurrentTrack(favoriteTracks[0]));
+        dispatch(setCurrentTrack(favoritePlayList[0]));
       }
     }
-  }
-
-  if (errorMessage) {
-    console.log(errorMessage);
   }
 
   return (
@@ -67,7 +53,7 @@ export default function Track({
             {currentTrack?._id === trackItem._id ? (
               <svg
                 className={classNames(styles.track__activeTrackTitleSvg, {
-                  [styles.track__playingActiveTrack]: isPlaying,
+                  [styles.track__playingActiveTrack]: isNowPlaying,
                 })}
               >
                 <use xlinkHref="/img/icon/active.svg"></use>
@@ -92,7 +78,7 @@ export default function Track({
         </div>
         <div className={styles.track__album}>
           <Link className={styles.track__albumLink} href="">
-            {errorMessage ? errorMessage : trackItem.album}
+            {trackItem.album}
           </Link>
         </div>
         <div className={styles.track__time}>
@@ -105,6 +91,10 @@ export default function Track({
           >
             <use
               onClick={(event) => {
+                if (errorMessage) {
+                  alert(errorMessage);
+                }
+
                 toggleLike(event);
 
                 if (isLike) {

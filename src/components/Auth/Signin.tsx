@@ -60,12 +60,10 @@ export default function Signin() {
 
     userSignin(signinData)
       .then((response) => {
-        // localStorage.setItem(LS_USER, JSON.stringify(response));
         dispatch(setStorageUsername(response.username));
         return getBothTokens(signinData);
       })
       .then((response) => {
-        // localStorage.setItem(LS_TOKENS, JSON.stringify(response));
         dispatch(setStorageAccessToken(response.access));
         dispatch(setStorageRefreshToken(response.refresh));
 
