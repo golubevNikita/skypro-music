@@ -42,6 +42,7 @@ export default function Bar() {
     setVolume(Number(event.target.value));
   }
 
+  const access = useAppSelector((state) => state.authentication.access);
   const { currentTrack, isNowPlaying, favoritePlayList } = useAppSelector(
     (state) => state.tracks,
   );
@@ -231,8 +232,8 @@ export default function Bar() {
                 >
                   <use
                     onClick={(event) => {
-                      if (errorMessage) {
-                        alert(errorMessage);
+                      if (!access) {
+                        alert(errorMessage || 'Нет авторизации');
                       }
 
                       toggleLike(event);

@@ -17,8 +17,6 @@ import { userSignin, getBothTokens } from '@/services/authApi';
 
 import { SigninDataInterface } from '@/sharedInterfaces/sharedInterfaces';
 
-// import { LS_USER, LS_TOKENS } from '@/services/utilities';
-
 import styles from './auth.module.css';
 
 // admin@admin.admin

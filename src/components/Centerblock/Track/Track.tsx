@@ -23,6 +23,7 @@ export default function Track({
   const { isLoading, errorMessage, toggleLike, isLike } =
     useLikeDislikeHook(trackItem);
 
+  const access = useAppSelector((state) => state.authentication.access);
   const { currentTrack, isNowPlaying, favoritePlayList } = useAppSelector(
     (state) => state.tracks,
   );
@@ -91,8 +92,8 @@ export default function Track({
           >
             <use
               onClick={(event) => {
-                if (errorMessage) {
-                  alert(errorMessage);
+                if (!access) {
+                  alert(errorMessage || 'Нет авторизации');
                 }
 
                 toggleLike(event);

@@ -25,25 +25,28 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
 
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const { currentPlayListName, currentPlayList } = useAppSelector(
-    (state) => state.tracks,
-  );
+  const { currentPlayList, favoritePlayList, currentPlayListName } =
+    useAppSelector((state) => state.tracks);
 
   useEffect(() => {
     async function initialTracksState() {
-      try {
-        const allTracks = await getAllTracks();
+      if (!currentPlayList.length) {
+        try {
+          const allTracks = await getAllTracks();
 
-        dispatch(setCurrentPlayList(allTracks.data));
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.log(error);
-          if (error.response) {
-            setErrorMessage(error.response.data.message);
-          } else if (error.request) {
-            setErrorMessage('Проверьте интернет-соединение и попробуйте позже');
-          } else {
-            setErrorMessage('Неизвестная ошибка');
+          dispatch(setCurrentPlayList(allTracks.data));
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            console.log(error);
+            if (error.response) {
+              setErrorMessage(error.response.data.message);
+            } else if (error.request) {
+              setErrorMessage(
+                'Проверьте интернет-соединение и попробуйте позже',
+              );
+            } else {
+              setErrorMessage('Неизвестная ошибка');
+            }
           }
         }
       }
@@ -53,7 +56,7 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
 
   useEffect(() => {
     async function initialTracksState() {
-      if (access) {
+      if (access && !favoritePlayList.length) {
         reAuthentication(
           (newToken) => getAllFavoriteTracks(newToken || access),
           refresh,

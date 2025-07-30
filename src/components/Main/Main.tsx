@@ -7,11 +7,11 @@ import Link from 'next/link';
 
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
-  setActiveGenres,
-  setActiveAuthors,
-  setCurrentPlayListName,
   setFilteredPlayList,
   setFavoritePlayList,
+  setCurrentPlayListName,
+  setActiveGenres,
+  setActiveAuthors,
 } from '@/store/features/trackSlice';
 import { clearStorageTokens } from '@/store/features/authSlice';
 

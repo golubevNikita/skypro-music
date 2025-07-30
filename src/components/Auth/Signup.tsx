@@ -17,13 +17,14 @@ import { userSignup, getBothTokens } from '@/services/authApi';
 
 import { SignupDataInterface } from '@/sharedInterfaces/sharedInterfaces';
 
-// import { LS_USER, LS_TOKENS } from '@/services/utilities';
-
 import styles from './auth.module.css';
 
 // admin@admin.admin
 
 export default function Signup() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const [signupData, setSignupData] = useState<SignupDataInterface>({
     email: '',
     password: '',
@@ -46,8 +47,6 @@ export default function Signup() {
     }
   }
 
-  const router = useRouter();
-  const dispatch = useAppDispatch();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
