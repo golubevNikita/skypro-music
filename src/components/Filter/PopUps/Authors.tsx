@@ -1,28 +1,29 @@
-'use client';
+// 'use client';
 import classNames from 'classnames';
 
-import { useAppSelector } from '@/store/store';
+// import { useAppDispatch } from '@/store/store';
+// import { setFilteredPlayList } from '@/store/features/trackSlice';
 
 import styles from '../popUps.module.css';
 
 interface AuthorsProps {
+  uniqueAuthors: string[];
   activeAuthorsState: string[];
-  setFunction: ([]: string[]) => void;
+  setStateFunction: ([]: string[]) => void;
   setChosenElements: (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>,
-    setFunction: ([]: string[]) => void,
+    setStateFunction: ([]: string[]) => void,
     arrayState: string[],
   ) => void;
 }
 
 export default function Authors({
+  uniqueAuthors,
   activeAuthorsState,
-  setFunction,
+  setStateFunction,
   setChosenElements,
 }: AuthorsProps) {
-  const uniqueAuthors: string[] = useAppSelector((state) => {
-    return state.tracks.filters.unique.authors;
-  });
+  // const dispatch = useAppDispatch();
 
   return (
     <div className={styles.authors__wrapper}>
@@ -36,7 +37,8 @@ export default function Authors({
                   activeAuthorsState.includes(authorEl),
               })}
               onClick={(event) => {
-                setChosenElements(event, setFunction, activeAuthorsState);
+                // dispatch(setFilteredPlayList());
+                setChosenElements(event, setStateFunction, activeAuthorsState);
               }}
             >
               {authorEl}

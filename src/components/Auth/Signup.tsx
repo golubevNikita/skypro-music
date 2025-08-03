@@ -6,15 +6,25 @@ import { AxiosError } from 'axios';
 
 import classNames from 'classnames';
 
-import { userSignup } from '@/services/authApi';
+import { useAppDispatch } from '@/store/store';
+import {
+  setStorageAccessToken,
+  setStorageRefreshToken,
+  setStorageUsername,
+} from '@/store/features/authSlice';
+
+import { userSignup, getBothTokens } from '@/services/authApi';
 
 import { SignupDataInterface } from '@/sharedInterfaces/sharedInterfaces';
 
-import { LS_USER } from '@/services/utilities';
-
 import styles from './auth.module.css';
 
+// admin@admin.admin
+
 export default function Signup() {
+  const router = useRouter();
+  const dispatch = useAppDispatch();
+
   const [signupData, setSignupData] = useState<SignupDataInterface>({
     email: '',
     password: '',
@@ -37,7 +47,6 @@ export default function Signup() {
     }
   }
 
-  const router = useRouter();
   const [errorMessage, setErrorMessage] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
 
@@ -64,9 +73,14 @@ export default function Signup() {
 
     userSignup(signupData)
       .then((response) => {
-        localStorage.setItem(LS_USER, JSON.stringify(response.result));
-
+        dispatch(setStorageUsername(response.result.username));
         alert(response.message);
+
+        return getBothTokens(signupData);
+      })
+      .then((response) => {
+        dispatch(setStorageAccessToken(response.access));
+        dispatch(setStorageRefreshToken(response.refresh));
 
         router.push('/music');
       })

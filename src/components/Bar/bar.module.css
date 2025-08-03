@@ -255,44 +255,79 @@
   margin-left: 26%;
 } */
 
-/* исправил с trackPlay__likeDis на trackPlay__dislike */
+/* исправил с trackPlay__likeDis на trackPlay__likeDislike */
 
-.trackPlay__dislike {
+.trackPlay__likeDislike {
+  display: flex;
   display: -webkit-box;
   display: -ms-flexbox;
-  display: flex;
-  -webkit-box-orient: horizontal;
-  -webkit-box-direction: normal;
-  -ms-flex-direction: row;
-  flex-direction: row;
+
+  align-items: center;
   -webkit-box-align: center;
   -ms-flex-align: center;
-  align-items: center;
-  margin-left: 26%;
+
+  margin-left: 29px;
+  padding: 5px;
 }
 
 /* такого класса нет во всём проекте
 .trackPlay__like, */
-.trackPlay__dislike {
-  padding: 5px;
-}
 
 .trackPlay__likeSvg {
   width: 14px;
   height: 12px;
   fill: transparent;
   stroke: #696969;
+
+  cursor: pointer;
 }
 
-.trackPlay__dislike {
-  margin-left: 28.5px;
+.trackPlay__likeSvg_active {
+  fill: rgba(182, 114, 255, 1);
+  stroke: rgba(182, 114, 255, 1);
 }
 
-.trackPlay__dislikeSvg {
-  width: 14.34px;
-  height: 13px;
-  fill: transparent;
-  stroke: #696969;
+.trackPlay__likeSvg_loading {
+  animation: pulse 2s linear infinite;
+}
+
+@keyframes pulse {
+  from {
+    transform: scale(1);
+  }
+  9% {
+    transform: scale(1.1);
+  }
+  18% {
+    transform: scale(1);
+  }
+  27% {
+    transform: scale(1.1);
+  }
+  36% {
+    transform: scale(1);
+  }
+  45% {
+    transform: scale(1);
+  }
+  54% {
+    transform: scale(1);
+  }
+  63% {
+    transform: scale(1.1);
+  }
+  72% {
+    transform: scale(1);
+  }
+  81% {
+    transform: scale(1.1);
+  }
+  90% {
+    transform: scale(1);
+  }
+  to {
+    transform: scale(1);
+  }
 }
 
 .volume__content {
@@ -357,10 +392,6 @@
   margin-top: -7px;
 }
 
-/* .btn {
-  cursor: pointer;
-} */
-
 .btnIcon:hover svg {
   fill: transparent;
   stroke: #acacac;
@@ -373,8 +404,8 @@
   cursor: pointer;
 }
 
-.btnIcon:active .trackPlay__likeSvg,
-.btnIcon:active .trackPlay__dislikeSvg {
+.btnIcon:active,
+.btnIcon:active {
   fill: #696969;
   stroke: #ffffff;
   cursor: pointer;

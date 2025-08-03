@@ -1,78 +1,32 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+import {
+  initialStoreState,
+  TrackItemInterface,
+} from '@/sharedInterfaces/sharedInterfaces';
 
-interface initialState {
-  currentTrack: null | TrackItemInterface;
-  // текущий трек
-
-  isNowPlaying: boolean;
-  // состояние проигрывания
-
-  currentPlayList: TrackItemInterface[];
-  // текущий плейлист, устанавливается как плейлист по умолчанию
-  // при первом рендере, выборе какой-либо подборки или сброшенных фильтрах
-
-  selectionSequence: number[];
-  // порядок ID треков по умолчанию: устанавливается при API запросе треков и никак не фильтруется,
-  // в дальнейшем используется для возврата порядка треков в исходную последовательность
-  // при выборе пользователем соответствующего фильтра
-
-  tracksSequence: number[];
-  // порядок ID треков при установленных фильтрах, нужно для фильтрации треков,
-  // а также для манипуляции их последовательностью
-
-  filteredPlayList: null | TrackItemInterface[];
-  // отфильтрованный плейлист: при каком-либо активном фильтре,
-  // устанавливается как плейлист по умолчанию
-
-  currentPlayListName: string;
-  // текущее название подборки, отслеживается
-  // для перерендера списка треков и сброса фильтров
-
-  filters: {
-    active: {
-      authors: string[];
-      genres: string[];
-    };
-    unique: {
-      authors: string[];
-      genres: string[];
-    };
-  };
-  // сами фильтры, выбор пользователя записывается сюда
-  // и дальше используются для фильтрации
-
-  isShuffledPlayList: boolean;
-  // состояние псевдорандомно перемешанного плейлиста
-
-  shuffledPlayList: TrackItemInterface[];
-  // псевдорандомно перемешанный плейлист, в зависимости от предыдущего свойства
-  // устанавливается как плейлист по умолчанию
-}
-
-const initialState: initialState = {
+const initialState: initialStoreState = {
   currentTrack: null,
   isNowPlaying: false,
-  currentPlayList: [],
-  selectionSequence: [],
-  tracksSequence: [],
-  filteredPlayList: null,
+  isShuffledPlayList: false,
+
   currentPlayListName: 'Треки',
 
+  currentPlayList: [],
+  pagePlayList: [],
+  filteredPlayList: [],
+  favoritePlayList: [],
+  shuffledPlayList: [],
+
+  selectionSequence: [],
+
   filters: {
-    active: {
-      authors: [],
-      genres: [],
-    },
-    unique: {
-      authors: [],
-      genres: [],
-    },
+    authors: [],
+    sequence: '',
+    genres: [],
   },
 
-  isShuffledPlayList: false,
-  shuffledPlayList: [],
+  tracksSequence: [],
 };
 
 const trackSlice = createSlice({
@@ -82,9 +36,18 @@ const trackSlice = createSlice({
     setCurrentTrack: (state, action: PayloadAction<TrackItemInterface>) => {
       state.currentTrack = action.payload;
     },
-
     setIsNowPlaying: (state, action: PayloadAction<boolean>) => {
       state.isNowPlaying = action.payload;
+    },
+    setIsShuffledPlayList: (state) => {
+      state.isShuffledPlayList = !state.isShuffledPlayList;
+      state.shuffledPlayList = state.filteredPlayList.length
+        ? state.filteredPlayList.toSorted(() => Math.random() - 0.5)
+        : state.pagePlayList.toSorted(() => Math.random() - 0.5);
+    },
+
+    setCurrentPlayListName: (state, action: PayloadAction<string>) => {
+      state.currentPlayListName = action.payload;
     },
 
     setCurrentPlayList: (
@@ -92,195 +55,66 @@ const trackSlice = createSlice({
       action: PayloadAction<TrackItemInterface[]>,
     ) => {
       state.currentPlayList = action.payload;
-      state.shuffledPlayList = state.currentPlayList.toSorted(
-        () => Math.random() - 0.5,
-      );
+    },
+    setPagePlayList: (state, action: PayloadAction<TrackItemInterface[]>) => {
+      state.pagePlayList = action.payload;
+    },
+    setFilteredPlayList: (
+      state,
+      action: PayloadAction<TrackItemInterface[]>,
+    ) => {
+      state.filteredPlayList = action.payload;
+    },
+    setFavoritePlayList: (
+      state,
+      action: PayloadAction<TrackItemInterface[]>,
+    ) => {
+      state.favoritePlayList = action.payload;
     },
 
     setSelectionSequence: (state, action: PayloadAction<number[]>) => {
       state.selectionSequence = action.payload;
     },
 
+    setFiltersApplication: (state) => {
+      let filteredPlayList = state.pagePlayList;
+
+      if (state.filters.authors.length) {
+        filteredPlayList = filteredPlayList.filter((track) => {
+          return state.filters.authors.includes(track.author);
+        });
+      }
+
+      if (state.filters.genres.length) {
+        filteredPlayList = filteredPlayList.filter((track) => {
+          return state.filters.genres.some((item) =>
+            track.genre.includes(item),
+          );
+        });
+      }
+
+      if (filteredPlayList.length !== state.pagePlayList.length) {
+        state.filteredPlayList = filteredPlayList;
+      } else {
+        state.filteredPlayList = [];
+      }
+    },
+
     setTracksSequence: (state, action: PayloadAction<number[]>) => {
       state.tracksSequence = action.payload;
-    },
-
-    setCurrentPlayListName: (state, action: PayloadAction<string>) => {
-      state.currentPlayListName = action.payload;
-    },
-
-    setFilteredPlayList: (state) => {
-      if (
-        state.filters.active.authors.length === 0 &&
-        state.filters.active.genres.length === 0 &&
-        state.tracksSequence.length !== 0
-      ) {
-        state.filteredPlayList = state.currentPlayList.toSorted((a, b) => {
-          const indexA = state.tracksSequence.indexOf(a._id);
-          const indexB = state.tracksSequence.indexOf(b._id);
-          return indexA - indexB;
-        });
-
-        state.shuffledPlayList = state.filteredPlayList.toSorted(
-          () => Math.random() - 0.5,
-        );
-        return;
-      }
-
-      if (
-        state.filters.active.authors.length !== 0 &&
-        state.filters.active.genres.length !== 0
-      ) {
-        const preFilteredArray = state.currentPlayList.filter((track) => {
-          return state.filters.active.authors.includes(track.author);
-        });
-
-        state.filteredPlayList = preFilteredArray.filter((track) => {
-          const checkArray: boolean[] = [];
-          for (const item of track.genre) {
-            checkArray.push(state.filters.active.genres.includes(item));
-          }
-
-          return checkArray.includes(true);
-        });
-
-        state.shuffledPlayList = state.filteredPlayList.toSorted(
-          () => Math.random() - 0.5,
-        );
-        return;
-      }
-
-      if (state.filters.active.authors.length !== 0) {
-        state.filteredPlayList = state.currentPlayList.filter((track) => {
-          return state.filters.active.authors.includes(track.author);
-        });
-
-        state.shuffledPlayList = state.filteredPlayList.toSorted(
-          () => Math.random() - 0.5,
-        );
-        return;
-      }
-
-      if (state.filters.active.genres.length !== 0) {
-        state.filteredPlayList = state.currentPlayList.filter((track) => {
-          const checkArray: boolean[] = [];
-          for (const item of track.genre) {
-            checkArray.push(state.filters.active.genres.includes(item));
-          }
-
-          return checkArray.includes(true);
-        });
-
-        state.shuffledPlayList = state.filteredPlayList.toSorted(
-          () => Math.random() - 0.5,
-        );
-        return;
-      } else {
-        state.filteredPlayList = null;
-      }
-    },
-
-    setSortedPlayList: (state) => {
-      const idFilters =
-        state.filters.active.authors.length !== 0 ||
-        state.filters.active.genres.length !== 0;
-
-      if (idFilters) {
-        if (
-          state.tracksSequence.length !== 0 &&
-          state.filteredPlayList !== null
-        ) {
-          state.filteredPlayList = state.filteredPlayList.toSorted((a, b) => {
-            const indexA = state.tracksSequence.indexOf(a._id);
-            const indexB = state.tracksSequence.indexOf(b._id);
-            return indexA - indexB;
-          });
-
-          state.shuffledPlayList = state.filteredPlayList.toSorted(
-            () => Math.random() - 0.5,
-          );
-          return;
-        }
-
-        if (
-          state.tracksSequence.length === 0 &&
-          state.filteredPlayList !== null
-        ) {
-          state.filteredPlayList = state.filteredPlayList.toSorted((a, b) => {
-            const indexA = state.selectionSequence.indexOf(a._id);
-            const indexB = state.selectionSequence.indexOf(b._id);
-            return indexA - indexB;
-          });
-
-          state.shuffledPlayList = state.filteredPlayList.toSorted(
-            () => Math.random() - 0.5,
-          );
-          return;
-        }
-
-        return;
-      }
-
-      if (!idFilters) {
-        if (state.tracksSequence.length !== 0) {
-          state.filteredPlayList = state.currentPlayList.toSorted((a, b) => {
-            const indexA = state.tracksSequence.indexOf(a._id);
-            const indexB = state.tracksSequence.indexOf(b._id);
-            return indexA - indexB;
-          });
-
-          state.shuffledPlayList = state.filteredPlayList.toSorted(
-            () => Math.random() - 0.5,
-          );
-          return;
-        }
-
-        if (state.tracksSequence.length === 0) {
-          state.filteredPlayList = null;
-
-          state.shuffledPlayList = state.currentPlayList.toSorted(
-            () => Math.random() - 0.5,
-          );
-          return;
-        }
-
-        return;
-      }
-    },
-
-    setUniqueFilters: (
-      state,
-      action: PayloadAction<{
-        authors: string[];
-        genres: string[];
-      }>,
-    ) => {
-      state.filters.unique = action.payload;
-    },
-
-    setActiveAuthors: (state, action: PayloadAction<string[]>) => {
-      state.filters.active.authors = action.payload;
-    },
-
-    setActiveGenres: (state, action: PayloadAction<string[]>) => {
-      state.filters.active.genres = action.payload;
-    },
-
-    setIsShuffledPlayList: (state) => {
-      state.isShuffledPlayList = !state.isShuffledPlayList;
     },
 
     setNextTrack: (state) => {
       let playList;
 
-      if (state.filteredPlayList) {
+      if (state.filteredPlayList.length) {
         playList = state.isShuffledPlayList
           ? state.shuffledPlayList
           : state.filteredPlayList;
       } else {
         playList = state.isShuffledPlayList
           ? state.shuffledPlayList
-          : state.currentPlayList;
+          : state.pagePlayList;
       }
 
       if (state.currentTrack) {
@@ -295,11 +129,10 @@ const trackSlice = createSlice({
         }
       }
     },
-
     setPreviousTrack: (state) => {
       let playList;
 
-      if (state.filteredPlayList) {
+      if (state.filteredPlayList.length) {
         playList = state.isShuffledPlayList
           ? state.shuffledPlayList
           : state.filteredPlayList;
@@ -321,24 +154,71 @@ const trackSlice = createSlice({
         }
       }
     },
+
+    setActiveAuthors: (state, action: PayloadAction<string[]>) => {
+      state.filters.authors = action.payload;
+    },
+    setActiveGenres: (state, action: PayloadAction<string[]>) => {
+      state.filters.genres = action.payload;
+    },
+
+    setSortedPlayList: (state) => {
+      const currentPlayList = state.filteredPlayList.length
+        ? state.filteredPlayList
+        : state.pagePlayList;
+
+      const currentSequence = state.tracksSequence.length
+        ? state.tracksSequence
+        : state.selectionSequence;
+
+      state.filteredPlayList = currentPlayList.toSorted((a, b) => {
+        const indexA = currentSequence.indexOf(a._id);
+        const indexB = currentSequence.indexOf(b._id);
+        return indexA - indexB;
+      });
+    },
+
+    addLikedTracks: (state, action: PayloadAction<TrackItemInterface>) => {
+      state.favoritePlayList = [...state.favoritePlayList, action.payload];
+    },
+    removeLikedTracks: (state, action: PayloadAction<TrackItemInterface>) => {
+      const newFavoritePlayList = state.favoritePlayList.filter(
+        (item) => item._id !== action.payload._id,
+      );
+
+      state.favoritePlayList = newFavoritePlayList;
+    },
   },
 });
 
 export const {
   setCurrentTrack,
   setIsNowPlaying,
-  setCurrentPlayList,
-  setSelectionSequence,
-  setTracksSequence,
-  setCurrentPlayListName,
-  setFilteredPlayList,
-  setSortedPlayList,
-  setUniqueFilters,
-  setActiveGenres,
-  setActiveAuthors,
   setIsShuffledPlayList,
+
+  setCurrentPlayListName,
+
+  setCurrentPlayList,
+  setPagePlayList,
+  setFilteredPlayList,
+  setFavoritePlayList,
+
+  setSelectionSequence,
+
+  setFiltersApplication,
+
+  setTracksSequence,
+
   setNextTrack,
   setPreviousTrack,
+
+  setActiveGenres,
+  setActiveAuthors,
+
+  setSortedPlayList,
+
+  addLikedTracks,
+  removeLikedTracks,
 } = trackSlice.actions;
 
 export const trackSliceReducer = trackSlice.reducer;

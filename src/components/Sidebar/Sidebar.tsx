@@ -13,9 +13,9 @@ import {
   setActiveGenres,
   setActiveAuthors,
   setFilteredPlayList,
+  setFavoritePlayList,
 } from '@/store/features/trackSlice';
-
-import { LS_USER } from '@/services/utilities';
+import { clearStorageTokens } from '@/store/features/authSlice';
 
 import { AllSelectionsPromiseInterface } from '@/sharedInterfaces/sharedInterfaces';
 
@@ -25,20 +25,23 @@ export default function Sidebar() {
   const dispatch = useAppDispatch();
   const router = useRouter();
 
-  function userLogout(event: React.MouseEvent<HTMLDivElement>) {
-    event.preventDefault();
-    event.stopPropagation();
-
-    localStorage.removeItem(LS_USER);
-    router.push('/auth/Signin');
-  }
-
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [localStorageUser, setLocalStorageUser] = useState<string | null>(null);
   const [sidebarSelections, setSidebarSelections] =
     useState<AllSelectionsPromiseInterface>({
       success: false,
       data: [],
     });
+
+  function userLogout(event: React.MouseEvent<HTMLDivElement>) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    dispatch(setFavoritePlayList([]));
+    dispatch(clearStorageTokens());
+
+    router.push('/auth/Signin');
+  }
 
   function clearAllFilters(
     event: React.MouseEvent<HTMLAnchorElement, MouseEvent>,
@@ -47,38 +50,36 @@ export default function Sidebar() {
 
     dispatch(setActiveGenres([]));
     dispatch(setActiveAuthors([]));
-    dispatch(setFilteredPlayList());
+    dispatch(setFilteredPlayList([]));
   }
 
-  const [localStorageValue, setLocalStorageValue] = useState<string | null>(
-    null,
-  );
-
   useEffect(() => {
-    setLocalStorageValue(localStorage.getItem(LS_USER));
+    setLocalStorageUser(localStorage.getItem('username'));
 
     async function getSelections() {
-      try {
-        const allSelections = await getAllSelections();
+      if (!sidebarSelections.data.length) {
+        try {
+          const allSelections = await getAllSelections();
 
-        const existingSelections = allSelections.data.filter(
-          (selection) => selection.items.length !== 0,
-        );
+          const existingSelections = allSelections.data.filter(
+            (selection) => selection.items.length !== 0,
+          );
 
-        setSidebarSelections({
-          ...sidebarSelections,
-          success: allSelections.success,
-          data: existingSelections,
-        });
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          console.log(error);
-          if (error.response) {
-            setErrorMessage(error.response.data.message);
-          } else if (error.request) {
-            setErrorMessage('Подборки временно недоступны, попробуйте позже');
-          } else {
-            setErrorMessage('Подборки временно недоступны, попробуйте позже');
+          setSidebarSelections({
+            ...sidebarSelections,
+            success: allSelections.success,
+            data: existingSelections,
+          });
+        } catch (error) {
+          if (error instanceof AxiosError) {
+            console.log(error);
+            if (error.response) {
+              setErrorMessage(error.response.data.message);
+            } else if (error.request) {
+              setErrorMessage('Подборки временно недоступны, попробуйте позже');
+            } else {
+              setErrorMessage('Подборки временно недоступны, попробуйте позже');
+            }
           }
         }
       }
@@ -93,15 +94,11 @@ export default function Sidebar() {
     '/img/playlist03.png',
   ];
 
-  const localStorageUser = localStorageValue
-    ? JSON.parse(localStorageValue)
-    : 'Ошибка, данные отсутствуют';
-
   return (
     <div className={styles.main__sidebar}>
       <div className={styles.sidebar__personal}>
         <p className={styles.sidebar__personalName}>
-          {localStorageUser.username}
+          {localStorageUser || 'Нет авторизации'}
         </p>
         <div className={styles.sidebar__icon}>
           <div onClick={(event) => userLogout(event)}>
@@ -126,7 +123,11 @@ export default function Sidebar() {
                   >
                     <Image
                       priority={true}
-                      src={sidebarPictures[Math.floor(Math.random() * 3)]}
+                      src={
+                        sidebarPictures[
+                          Math.floor(Math.random() * sidebarPictures.length)
+                        ]
+                      }
                       alt="day's playlist"
                       width={250}
                       height={170}

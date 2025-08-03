@@ -1,3 +1,50 @@
+export interface initialStoreState {
+  currentTrack: null | TrackItemInterface;
+  // текущий трек
+  isNowPlaying: boolean;
+  // состояние проигрывания
+  isShuffledPlayList: boolean;
+  // состояние псевдорандомно перемешанного плейлиста
+  // при изменении на true мешает либо page pagePlayList либо filteredPlayList,
+  // если последний содержит хотя бы один элемент
+
+  currentPlayListName: string;
+  // текущее название подборки, отслеживается
+  // для перерендера списка треков и сброса фильтров
+
+  currentPlayList: TrackItemInterface[];
+  // все треки приложения. В дальнейшем на основе currentPlayList составляются разные подборки.
+  // Устанавливается один раз при входе на сайт (обновлении страницы) и больше не меняется.
+  pagePlayList: TrackItemInterface[];
+  // плейлист конкретной страницы, меняется при смене url
+  filteredPlayList: TrackItemInterface[];
+  // отфильтрованный плейлист: устанавливается как плейлист по умолчанию
+  // при каком-либо активном фильтре
+  favoritePlayList: TrackItemInterface[];
+  // плейлист понравившихся треков, меняется при
+  // нажатии на сердечко либо возле трека, либо в проигрывателе
+  shuffledPlayList: TrackItemInterface[];
+  // псевдорандомно перемешанный плейлист, в зависимости от isShuffledPlayList
+  // устанавливается как плейлист по умолчанию
+
+  selectionSequence: number[];
+  // порядок ID треков по умолчанию: устанавливается при изменении подборки (pagePlayList, favoritePlayList)
+  // и никак не фильтруется, нужен для возврата порядка треков в исходную последовательность
+  // при выборе пользователем соответствующего фильтра
+
+  filters: {
+    authors: string[];
+    sequence: string;
+    genres: string[];
+  };
+  // выбор пользователя записывается в эти фильтры,
+  // используются для фильтрации
+
+  tracksSequence: number[];
+  // порядок ID треков при установленных фильтрах,
+  // нужен для манипуляции последовательностью треков
+}
+
 export interface SigninDataInterface {
   email: string;
   password: string;

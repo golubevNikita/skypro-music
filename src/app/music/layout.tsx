@@ -1,3 +1,5 @@
+'use client';
+
 import { ReactNode } from 'react';
 import { Suspense } from 'react';
 
@@ -7,9 +9,12 @@ import Sidebar from '@/components/Sidebar/Sidebar';
 import SidebarSkeletonLoading from '@/components/Loading/LoadingSidebar/Loading';
 import Bar from '@/components/Bar/Bar';
 
+import { useAuthHook } from '@/hooks/useAuthHook';
+
 import styles from './layout.module.css';
 
 export default function MusicLayout({ children }: { children: ReactNode }) {
+  useAuthHook();
   return (
     <div className={styles.wrapper}>
       <div className={styles.container}>

@@ -45,5 +45,3 @@ export function timeProgerssInfo(
     return `${formatTime(currentTime)} / ${formatTime(totalTime)}`;
   }
 }
-
-export const LS_USER = 'localUser';
