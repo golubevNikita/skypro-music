@@ -1,4 +1,3 @@
-'use client';
 import classNames from 'classnames';
 
 import { useAppDispatch, useAppSelector } from '@/store/store';

@@ -1,8 +1,7 @@
-// 'use client';
 import classNames from 'classnames';
 
-// import { useAppDispatch } from '@/store/store';
-// import { setFilteredPlayList } from '@/store/features/trackSlice';
+import { useAppDispatch } from '@/store/store';
+import { setSortedPlayList } from '@/store/features/trackSlice';
 
 import styles from '../popUps.module.css';
 
@@ -23,7 +22,7 @@ export default function Genres({
   setStateFunction,
   setChosenElements,
 }: GenresProps) {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   return (
     <div className={styles.genres__wrapper}>
@@ -37,8 +36,8 @@ export default function Genres({
                   activeGenresState.includes(genreEl),
               })}
               onClick={(event) => {
-                // dispatch(setFilteredPlayList());
                 setChosenElements(event, setStateFunction, activeGenresState);
+                dispatch(setSortedPlayList());
               }}
             >
               {genreEl}

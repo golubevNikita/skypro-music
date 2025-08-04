@@ -11,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setCurrentPlayList,
   setFavoritePlayList,
+  setTracksError,
 } from '@/store/features/trackSlice';
 
 import { reAuthentication } from '@/services/reAuthentication';
@@ -25,8 +26,12 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
 
   const [errorMessage, setErrorMessage] = useState<string>('');
 
-  const { currentPlayList, favoritePlayList, currentPlayListName } =
-    useAppSelector((state) => state.tracks);
+  const {
+    currentPlayList,
+    favoritePlayList,
+    currentPlayListName,
+    tracksError,
+  } = useAppSelector((state) => state.tracks);
 
   useEffect(() => {
     async function initialTracksState() {
@@ -40,6 +45,7 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
             console.log(error);
             if (error.response) {
               setErrorMessage(error.response.data.message);
+              dispatch(setTracksError('Упс, что-то пошло не так'));
             } else if (error.request) {
               setErrorMessage(
                 'Проверьте интернет-соединение и попробуйте позже',
@@ -79,6 +85,7 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
               console.log(error);
               if (error.response) {
                 setErrorMessage(error.response.data.message);
+                dispatch(setTracksError('Упс, что-то пошло не так'));
               } else if (error.request) {
                 setErrorMessage(
                   'Проверьте интернет-соединение и попробуйте позже',
@@ -98,7 +105,7 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
     <div className={styles.centerblock}>
       <Search />
       <h2 className={styles.centerblock__h2}>
-        {errorMessage ? errorMessage : currentPlayListName}
+        {currentPlayListName || 'Треки'}
       </h2>
       <div className={styles.centerblock__filter}>
         <div className={styles.filter__title}>Искать по:</div>
@@ -122,7 +129,15 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
           </div>
         </div>
         <div className={styles.content__playlist}>
-          {errorMessage ? <p>{errorMessage}</p> : trackList}
+          {tracksError || errorMessage ? (
+            <p>
+              {tracksError}
+              <br />
+              {errorMessage}
+            </p>
+          ) : (
+            trackList
+          )}
         </div>
       </div>
     </div>

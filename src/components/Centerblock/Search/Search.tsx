@@ -2,13 +2,25 @@
 
 import { useState } from 'react';
 
+import { useAppDispatch } from '@/store/store';
+import {
+  setSearchline,
+  setFiltersApplication,
+  setSortedPlayList,
+} from '@/store/features/trackSlice';
+
 import styles from '../centerblock.module.css';
 
 export default function Search() {
+  const dispatch = useAppDispatch();
   const [searchInput, setSearchInput] = useState<string>('');
 
   function searchInputChange(event: string) {
     setSearchInput(event);
+
+    dispatch(setSearchline(event));
+    dispatch(setFiltersApplication());
+    dispatch(setSortedPlayList());
   }
 
   return (
@@ -19,7 +31,7 @@ export default function Search() {
       <input
         className={styles.search__text}
         type="search"
-        placeholder="Поиск"
+        placeholder="Поиск (не менее трёх символов)"
         name="search"
         onChange={(event) => {
           searchInputChange(event.target.value);

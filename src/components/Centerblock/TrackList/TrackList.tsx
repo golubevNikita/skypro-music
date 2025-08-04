@@ -9,11 +9,11 @@ export default function TrackList({
 }: {
   tracks: TrackItemInterface[];
 }) {
-  const pagePlayList = useAppSelector((state) => {
-    return state.tracks.pagePlayList;
-  });
+  const { pagePlayList, tracksError } = useAppSelector((state) => state.tracks);
 
-  return (tracks || pagePlayList).map((trackItem) => {
-    return <Track key={trackItem._id} trackItem={trackItem} />;
-  });
+  return tracksError
+    ? tracksError
+    : (tracks || pagePlayList).map((trackItem) => {
+        return <Track key={trackItem._id} trackItem={trackItem} />;
+      });
 }
