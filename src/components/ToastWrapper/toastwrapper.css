@@ -1,0 +1,23 @@
+.Toastify__toast {
+  background-color: #313131;
+  color: #ffffff;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.Toastify__close-button--light {
+  color: #ffffff;
+  opacity: 1;
+}
+
+.Toastify__close-button:hover {
+  transform: scale(1.2);
+}
+
+.Toastify__progress-bar--error {
+  background: #ad61ff;
+}
+
+.Toastify__toast-icon svg {
+  fill: #ad61ff;
+}

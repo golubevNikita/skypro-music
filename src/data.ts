@@ -1,6 +1,6 @@
-import { trackItemInterface } from './sharedInterfaces/sharedInterfaces';
+import { TrackItemInterface } from './sharedInterfaces/sharedInterfaces';
 
-export const data: trackItemInterface[] = [
+export const data: TrackItemInterface[] = [
   {
     _id: 8,
     name: 'Chase',

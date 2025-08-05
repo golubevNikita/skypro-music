@@ -49,12 +49,13 @@ export default function Signin() {
     event.stopPropagation();
 
     setErrorMessage('');
-    setLoading(true);
 
     if (!signinData.email.trim() || !signinData.password.trim()) {
       setErrorMessage('Пожалуйста, заполните все поля');
       return;
     }
+
+    setLoading(true);
 
     userSignin(signinData)
       .then((response) => {
@@ -69,7 +70,6 @@ export default function Signin() {
       })
       .catch((error) => {
         if (error instanceof AxiosError) {
-          console.log(error);
           if (error.response) {
             setErrorMessage(error.response.data.message);
           } else if (error.request) {

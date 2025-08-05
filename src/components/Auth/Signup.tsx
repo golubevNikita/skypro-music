@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { AxiosError } from 'axios';
-
 import classNames from 'classnames';
+import { toast } from 'react-toastify';
 
 import { useAppDispatch } from '@/store/store';
 import {
@@ -55,7 +55,6 @@ export default function Signup() {
     event.stopPropagation();
 
     setErrorMessage('');
-    setLoading(true);
 
     if (signupData.password.trim().length < 6) {
       setErrorMessage('Пароль должен быть не менее 6 символов');
@@ -65,16 +64,18 @@ export default function Signup() {
     if (
       !signupData.email.trim() ||
       !signupData.password.trim() ||
-      !signupData.email.trim()
+      !signupData.username.trim()
     ) {
       setErrorMessage('Пожалуйста, заполните все поля');
       return;
     }
 
+    setLoading(true);
+
     userSignup(signupData)
       .then((response) => {
         dispatch(setStorageUsername(response.result.username));
-        alert(response.message);
+        toast.success(response.message);
 
         return getBothTokens(signupData);
       })
@@ -86,7 +87,6 @@ export default function Signup() {
       })
       .catch((error) => {
         if (error instanceof AxiosError) {
-          console.log(error);
           if (error.response) {
             setErrorMessage(error.response.data.message);
           } else if (error.request) {
