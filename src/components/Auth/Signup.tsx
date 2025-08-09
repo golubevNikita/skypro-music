@@ -19,8 +19,6 @@ import { SignupDataInterface } from '@/sharedInterfaces/sharedInterfaces';
 
 import styles from './auth.module.css';
 
-// admin@admin.admin
-
 export default function Signup() {
   const router = useRouter();
   const dispatch = useAppDispatch();

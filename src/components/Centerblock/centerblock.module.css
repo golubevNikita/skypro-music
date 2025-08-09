@@ -286,8 +286,6 @@
   }
 }
 
-/* В разметке есть класс track__title-text, но самих стилей нет */
-
 .track__titleLink {
   font-style: normal;
   font-weight: 400;
@@ -336,7 +334,6 @@
 }
 
 .track__time {
-  /* Есть в разметке, но нет в стилях скобочка грусти( */
   width: 60px;
   display: flex;
   align-items: center;

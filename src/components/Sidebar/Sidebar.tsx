@@ -8,7 +8,7 @@ import { AxiosError } from 'axios';
 
 import { getAllSelections } from '@/services/tracksApi';
 
-import { useAppDispatch } from '@/store/store';
+import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setActiveGenres,
   setActiveAuthors,
@@ -32,6 +32,8 @@ export default function Sidebar() {
       success: false,
       data: [],
     });
+
+  const username = useAppSelector((state) => state.authentication.username);
 
   function userLogout(event: React.MouseEvent<HTMLDivElement>) {
     event.preventDefault();
@@ -72,7 +74,6 @@ export default function Sidebar() {
           });
         } catch (error) {
           if (error instanceof AxiosError) {
-            console.log(error);
             if (error.response) {
               setErrorMessage(error.response.data.message);
             } else if (error.request) {
@@ -87,6 +88,12 @@ export default function Sidebar() {
 
     getSelections();
   }, []);
+
+  useEffect(() => {
+    if (!username) {
+      setLocalStorageUser('Нет авторизации');
+    }
+  }, [username]);
 
   const sidebarPictures: string[] = [
     '/img/playlist01.png',

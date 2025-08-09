@@ -19,8 +19,6 @@ import { SigninDataInterface } from '@/sharedInterfaces/sharedInterfaces';
 
 import styles from './auth.module.css';
 
-// admin@admin.admin
-
 export default function Signin() {
   const router = useRouter();
   const dispatch = useAppDispatch();

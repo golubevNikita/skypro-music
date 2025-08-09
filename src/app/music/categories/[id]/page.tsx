@@ -50,7 +50,6 @@ export default function TrackListContent() {
           );
         } catch (error) {
           if (error instanceof AxiosError) {
-            console.log(error);
             if (error.response) {
               setErrorMessage(error.response.data.message);
             } else if (error.request) {

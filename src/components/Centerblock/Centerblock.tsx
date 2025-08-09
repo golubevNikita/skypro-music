@@ -42,7 +42,6 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
           dispatch(setCurrentPlayList(allTracks.data));
         } catch (error) {
           if (error instanceof AxiosError) {
-            console.log(error);
             if (error.response) {
               setErrorMessage(error.response.data.message);
               dispatch(setTracksError('Упс, что-то пошло не так'));
@@ -82,7 +81,6 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
           })
           .catch((error) => {
             if (error instanceof AxiosError) {
-              console.log(error);
               if (error.response) {
                 setErrorMessage(error.response.data.message);
                 dispatch(setTracksError('Упс, что-то пошло не так'));
