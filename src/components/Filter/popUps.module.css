@@ -1,5 +1,4 @@
 .filter__button {
-  /*composes: btn-text from '/src/UI/Button/button.module.css';*/
   position: relative;
   font-style: normal;
   font-weight: 400;

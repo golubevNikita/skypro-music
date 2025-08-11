@@ -34,7 +34,7 @@ export interface initialStoreState {
 
   filters: {
     authors: string[];
-    sequence: string;
+    searchline: string;
     genres: string[];
   };
   // выбор пользователя записывается в эти фильтры,
@@ -43,6 +43,9 @@ export interface initialStoreState {
   tracksSequence: number[];
   // порядок ID треков при установленных фильтрах,
   // нужен для манипуляции последовательностью треков
+
+  tracksError: string;
+  // контейнер для ошибок
 }
 
 export interface SigninDataInterface {

@@ -1,8 +1,7 @@
-// 'use client';
 import classNames from 'classnames';
 
-// import { useAppDispatch } from '@/store/store';
-// import { setFilteredPlayList } from '@/store/features/trackSlice';
+import { useAppDispatch } from '@/store/store';
+import { setSortedPlayList } from '@/store/features/trackSlice';
 
 import styles from '../popUps.module.css';
 
@@ -23,7 +22,7 @@ export default function Authors({
   setStateFunction,
   setChosenElements,
 }: AuthorsProps) {
-  // const dispatch = useAppDispatch();
+  const dispatch = useAppDispatch();
 
   return (
     <div className={styles.authors__wrapper}>
@@ -37,8 +36,8 @@ export default function Authors({
                   activeAuthorsState.includes(authorEl),
               })}
               onClick={(event) => {
-                // dispatch(setFilteredPlayList());
                 setChosenElements(event, setStateFunction, activeAuthorsState);
+                dispatch(setSortedPlayList());
               }}
             >
               {authorEl}

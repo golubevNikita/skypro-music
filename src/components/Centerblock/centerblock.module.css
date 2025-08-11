@@ -109,6 +109,22 @@
   -ms-flex-direction: column;
   flex-direction: column;
   overflow-y: auto;
+
+  height: calc(100vh - 79px);
+}
+
+.content__playlist::-webkit-scrollbar {
+  width: 4px;
+}
+
+.content__playlist::-webkit-scrollbar-track {
+  background: #313131;
+}
+
+.content__playlist::-webkit-scrollbar-thumb {
+  background-color: #181818;
+  border-radius: 2px;
+  border: none;
 }
 
 .centerblock__search {
@@ -270,8 +286,6 @@
   }
 }
 
-/* В разметке есть класс track__title-text, но самих стилей нет */
-
 .track__titleLink {
   font-style: normal;
   font-weight: 400;
@@ -320,7 +334,6 @@
 }
 
 .track__time {
-  /* Есть в разметке, но нет в стилях скобочка грусти( */
   width: 60px;
   display: flex;
   align-items: center;

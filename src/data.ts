@@ -1,6 +1,6 @@
-import { trackItemInterface } from './sharedInterfaces/sharedInterfaces';
+import { TrackItemInterface } from './sharedInterfaces/sharedInterfaces';
 
-export const data: trackItemInterface[] = [
+export const data: TrackItemInterface[] = [
   {
     _id: 8,
     name: 'Chase',
@@ -32,7 +32,7 @@ export const data: trackItemInterface[] = [
     name: 'Sneaky Snitch',
     author: 'Kevin Macleod',
     release_date: '2022-04-16',
-    genre: ['Классическая музыка'],
+    genre: ['Электронная музыка'],
     duration_in_seconds: 305,
     album: 'Sneaky Snitch',
     logo: null,
@@ -45,7 +45,7 @@ export const data: trackItemInterface[] = [
     name: 'Secret Garden',
     author: 'Mixkit',
     release_date: '1972-06-06',
-    genre: ['Классическая музыка'],
+    genre: ['Рок музыка'],
     duration_in_seconds: 324,
     album: 'Secret Garden',
     logo: null,
@@ -53,13 +53,12 @@ export const data: trackItemInterface[] = [
       'https://webdev-music-003b5b991590.herokuapp.com/media/music_files/Mixkit_-_Secret_Garden.mp3',
     stared_user: [],
   },
-
   {
     _id: 12,
     name: 'A journey of successfull winners',
     author: '-',
     release_date: '1985-02-02',
-    genre: ['Классическая музыка'],
+    genre: ['Рок музыка'],
     duration_in_seconds: 255,
     album: '-',
     logo: null,
@@ -124,7 +123,7 @@ export const data: trackItemInterface[] = [
     name: 'Cinematic',
     author: 'Winniethemoog',
     release_date: '2004-10-01',
-    genre: ['Классическая музыка'],
+    genre: ['Электронная музыка'],
     duration_in_seconds: 206,
     album: 'Cinematic',
     logo: null,

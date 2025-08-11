@@ -1,6 +1,7 @@
 'use client';
 import Link from 'next/link';
 import classNames from 'classnames';
+import { toast } from 'react-toastify';
 
 import { formatTime } from '@/services/utilities';
 
@@ -93,7 +94,7 @@ export default function Track({
             <use
               onClick={(event) => {
                 if (!access) {
-                  alert(errorMessage || 'Нет авторизации');
+                  toast.error(errorMessage || 'Нет авторизации');
                 }
 
                 toggleLike(event);

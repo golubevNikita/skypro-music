@@ -1,7 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
-// import { LS_TOKENS } from '@/services/utilities';
-
 interface initialState {
   username: string;
   access: string;

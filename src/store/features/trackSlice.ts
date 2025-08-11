@@ -22,14 +22,16 @@ const initialState: initialStoreState = {
 
   filters: {
     authors: [],
-    sequence: '',
+    searchline: '',
     genres: [],
   },
 
   tracksSequence: [],
+
+  tracksError: '',
 };
 
-const trackSlice = createSlice({
+export const trackSlice = createSlice({
   name: 'tracks',
   initialState,
   reducers: {
@@ -77,6 +79,7 @@ const trackSlice = createSlice({
     },
 
     setFiltersApplication: (state) => {
+      state.tracksError = '';
       let filteredPlayList = state.pagePlayList;
 
       if (state.filters.authors.length) {
@@ -91,6 +94,20 @@ const trackSlice = createSlice({
             track.genre.includes(item),
           );
         });
+      }
+
+      if (state.filters.searchline.length >= 3) {
+        const searchlineFilter = filteredPlayList.filter((track) => {
+          return track.name
+            .toLowerCase()
+            .includes(state.filters.searchline.toLowerCase());
+        });
+
+        if (searchlineFilter.length === 0) {
+          state.tracksError = 'Нет треков, удовлетворяющих условиям поиска';
+        } else {
+          filteredPlayList = searchlineFilter;
+        }
       }
 
       if (filteredPlayList.length !== state.pagePlayList.length) {
@@ -158,6 +175,9 @@ const trackSlice = createSlice({
     setActiveAuthors: (state, action: PayloadAction<string[]>) => {
       state.filters.authors = action.payload;
     },
+    setSearchline: (state, action: PayloadAction<string>) => {
+      state.filters.searchline = action.payload;
+    },
     setActiveGenres: (state, action: PayloadAction<string[]>) => {
       state.filters.genres = action.payload;
     },
@@ -188,6 +208,10 @@ const trackSlice = createSlice({
 
       state.favoritePlayList = newFavoritePlayList;
     },
+
+    setTracksError: (state, action: PayloadAction<string>) => {
+      state.tracksError = action.payload;
+    },
   },
 });
 
@@ -213,12 +237,15 @@ export const {
   setPreviousTrack,
 
   setActiveGenres,
+  setSearchline,
   setActiveAuthors,
 
   setSortedPlayList,
 
   addLikedTracks,
   removeLikedTracks,
+
+  setTracksError,
 } = trackSlice.actions;
 
 export const trackSliceReducer = trackSlice.reducer;

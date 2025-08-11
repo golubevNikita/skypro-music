@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import classNames from 'classnames';
 import { useState, useEffect, useRef } from 'react';
+import { toast } from 'react-toastify';
 
 import Progressbar from './Progressbar';
 
@@ -233,7 +234,7 @@ export default function Bar() {
                   <use
                     onClick={(event) => {
                       if (!access) {
-                        alert(errorMessage || 'Нет авторизации');
+                        toast.error(errorMessage || 'Нет авторизации');
                       }
 
                       toggleLike(event);
