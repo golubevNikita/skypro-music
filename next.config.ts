@@ -3,5 +3,13 @@ module.exports = {
     unoptimized: true,
   },
 
-  trailingSlash: true,
+  async redirects() {
+    return [
+      {
+        source: '/',
+        destination: '/music',
+        permanent: true,
+      },
+    ];
+  },
 };
