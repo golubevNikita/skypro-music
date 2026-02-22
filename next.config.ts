@@ -6,13 +6,15 @@ module.exports = {
   basePath: '/projects/music',
   assetPrefix: '/projects/music',
 
-  async redirects() {
-    return [
-      {
-        source: '/',
-        destination: '/music',
-        permanent: true,
-      },
-    ];
-  },
+  trailingSlash: true,
+
+  // async redirects() {
+  //   return [
+  //     {
+  //       source: '/',
+  //       destination: '/music',
+  //       permanent: true,
+  //     },
+  //   ];
+  // },
 };
