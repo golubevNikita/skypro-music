@@ -29,7 +29,7 @@ export default function NotFound() {
               или перенесена на другой адрес
             </p>
 
-            <Link className={styles.btn__onMain} href="/music">
+            <Link className={styles.btn__onMain} href="/">
               Вернуться на главную
             </Link>
           </div>

@@ -126,7 +126,7 @@ export default function Sidebar() {
                       clearAllFilters(event);
                     }}
                     className={styles.sidebar__link}
-                    href={`/music/categories/${selection._id}`}
+                    href={`/categories/${selection._id}`}
                   >
                     <Image
                       priority={true}

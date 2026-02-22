@@ -64,7 +64,7 @@ export default function Signin() {
         dispatch(setStorageAccessToken(response.access));
         dispatch(setStorageRefreshToken(response.refresh));
 
-        router.push('/music');
+        router.push('/');
       })
       .catch((error) => {
         if (error instanceof AxiosError) {

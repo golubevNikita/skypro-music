@@ -42,7 +42,7 @@ export default function Main() {
       dispatch(setCurrentPlayListName('Треки'));
       dispatch(clearStorageTokens());
 
-      router.push('/music');
+      router.push('/');
     }
   }
 
@@ -73,7 +73,7 @@ export default function Main() {
                   dispatch(setActiveAuthors([]));
                   dispatch(setFilteredPlayList([]));
                 }}
-                href="/music"
+                href="/"
                 className={styles.menu__link}
               >
                 Главное
@@ -88,7 +88,7 @@ export default function Main() {
                     dispatch(setActiveAuthors([]));
                     dispatch(setFilteredPlayList([]));
                   }}
-                  href={`/music/categories/${'favorite-tracks'}`}
+                  href={'/categories/favorite-tracks'}
                   className={styles.menu__link}
                 >
                   Мой плейлист
