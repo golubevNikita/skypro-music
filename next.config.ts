@@ -4,6 +4,7 @@ module.exports = {
   },
 
   basePath: '/projects/music',
+  assetPrefix: '/projects/music',
 
   async redirects() {
     return [
