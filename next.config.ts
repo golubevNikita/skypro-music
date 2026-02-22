@@ -3,6 +3,8 @@ module.exports = {
     unoptimized: true,
   },
 
+  basePath: '/projects/music',
+
   async redirects() {
     return [
       {
