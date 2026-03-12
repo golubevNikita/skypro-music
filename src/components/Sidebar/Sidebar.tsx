@@ -18,6 +18,7 @@ import {
 import { clearStorageTokens } from '@/store/features/authSlice';
 
 import { AllSelectionsPromiseInterface } from '@/sharedInterfaces/sharedInterfaces';
+import { withBasePath } from '@/utils/basePath';
 
 import styles from './sidebar.module.css';
 
@@ -96,9 +97,9 @@ export default function Sidebar() {
   }, [username]);
 
   const sidebarPictures: string[] = [
-    '/img/playlist01.png',
-    '/img/playlist02.png',
-    '/img/playlist03.png',
+    withBasePath('/img/playlist01.png'),
+    withBasePath('/img/playlist02.png'),
+    withBasePath('/img/playlist03.png'),
   ];
 
   return (
@@ -110,7 +111,7 @@ export default function Sidebar() {
         <div className={styles.sidebar__icon}>
           <div onClick={(event) => userLogout(event)}>
             <svg>
-              <use xlinkHref="/img/icon/sprite.svg#logout"></use>
+              <use xlinkHref={withBasePath('/img/icon/sprite.svg#logout')}></use>
             </svg>
           </div>
         </div>

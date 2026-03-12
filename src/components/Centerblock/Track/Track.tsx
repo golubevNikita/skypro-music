@@ -11,6 +11,7 @@ import { setCurrentTrack } from '@/store/features/trackSlice';
 import { useLikeDislikeHook } from '@/hooks/useLikeDislikeHook';
 
 import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+import { withBasePath } from '@/utils/basePath';
 
 import styles from '../centerblock.module.css';
 
@@ -58,11 +59,13 @@ export default function Track({
                   [styles.track__playingActiveTrack]: isNowPlaying,
                 })}
               >
-                <use xlinkHref="/img/icon/active.svg"></use>
+                <use xlinkHref={withBasePath('/img/icon/active.svg')}></use>
               </svg>
             ) : (
               <svg className={styles.track__titleSvg}>
-                <use xlinkHref="/img/icon/sprite.svg#icon-note"></use>
+                <use
+                  xlinkHref={withBasePath('/img/icon/sprite.svg#icon-note')}
+                ></use>
               </svg>
             )}
           </div>
@@ -103,7 +106,7 @@ export default function Track({
                   nextTrack();
                 }
               }}
-              xlinkHref="/img/icon/sprite.svg#icon-like"
+              xlinkHref={withBasePath('/img/icon/sprite.svg#icon-like')}
             ></use>
           </svg>
           <span className={styles.track__timeText}>

@@ -5,6 +5,8 @@ import { useRouter } from 'next/navigation';
 import Image from 'next/image';
 import Link from 'next/link';
 
+import { withBasePath } from '@/utils/basePath';
+
 import { useAppDispatch, useAppSelector } from '@/store/store';
 import {
   setFilteredPlayList,
@@ -51,7 +53,7 @@ export default function Main() {
       <div className={styles.nav__logo}>
         <Image
           className={styles.logo__image}
-          src="/img/logo.png"
+          src={withBasePath('/img/logo.png')}
           alt={'logo'}
           width={113}
           height={17}
