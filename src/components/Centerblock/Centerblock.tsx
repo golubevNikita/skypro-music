@@ -17,6 +17,7 @@ import {
 import { reAuthentication } from '@/services/reAuthentication';
 
 import { TrackItemInterface } from '@/sharedInterfaces/sharedInterfaces';
+import { withBasePath } from '@/utils/basePath';
 
 import styles from './centerblock.module.css';
 
@@ -122,7 +123,9 @@ export default function Centerblock({ trackList }: { trackList: ReactNode }) {
           </div>
           <div className={classNames(styles.playlistTitle__col, styles.col04)}>
             <svg className={styles.playlistTitle__svg}>
-              <use xlinkHref="/img/icon/sprite.svg#icon-watch"></use>
+              <use
+                xlinkHref={withBasePath('/img/icon/sprite.svg#icon-watch')}
+              ></use>
             </svg>
           </div>
         </div>

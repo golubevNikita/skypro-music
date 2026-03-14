@@ -1,6 +1,8 @@
 import { ReactNode } from 'react';
 import Image from 'next/image';
 
+import { withBasePath } from '@/utils/basePath';
+
 import styles from './layout.module.css';
 
 interface AuthLayoutProps {
@@ -16,7 +18,7 @@ export default function AuthLayout({ children }: AuthLayoutProps) {
             <form className={styles.modal__form}>
               <Image
                 className={styles.modal__logo}
-                src="/img/logo_modal.png"
+                src={withBasePath('/img/logo_modal.png')}
                 alt="logo"
                 width={140}
                 height={21}

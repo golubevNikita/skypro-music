@@ -8,6 +8,7 @@ import {
   setFiltersApplication,
   setSortedPlayList,
 } from '@/store/features/trackSlice';
+import { withBasePath } from '@/utils/basePath';
 
 import styles from '../centerblock.module.css';
 
@@ -26,7 +27,7 @@ export default function Search() {
   return (
     <div className={styles.centerblock__search}>
       <svg className={styles.search__svg}>
-        <use xlinkHref="/img/icon/sprite.svg#icon-search"></use>
+        <use xlinkHref={withBasePath('/img/icon/sprite.svg#icon-search')}></use>
       </svg>
       <input
         className={styles.search__text}

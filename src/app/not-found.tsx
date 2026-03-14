@@ -1,6 +1,8 @@
 import Link from 'next/link';
 import Image from 'next/image';
 
+import { withBasePath } from '@/utils/basePath';
+
 import styles from './not-found.module.css';
 
 export default function NotFound() {
@@ -15,7 +17,7 @@ export default function NotFound() {
               <Image
                 priority={true}
                 className={styles.notFound__smile_image}
-                src="/img/smile_crying.png"
+                src={withBasePath('/img/smile_crying.png')}
                 alt={'smile'}
                 width={52}
                 height={52}
